@@ -1,4 +1,4 @@
-name: GV-Pulse Workflow
+name: GV Pulse Workflow
 
 on:
   pull_request:
