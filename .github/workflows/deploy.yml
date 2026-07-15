@@ -94,7 +94,7 @@ jobs:
             echo "destructive=false" >> $GITHUB_OUTPUT
           fi
 
-      # FIXED: Case 1 now uses --manifest instead of --source-dir when destructive changes are present
+      # Case 1: Both Constructive AND Destructive Changes Exist (Uses delta manifest)
       - name: Execute Combined Deploy (Additions + Deletions)
         if: steps.change_detector.outputs.constructive == 'true' && steps.change_detector.outputs.destructive == 'true'
         run: |
@@ -105,6 +105,7 @@ jobs:
             --wait 60
 
       # Case 2: Constructive updates ONLY (No deletions). Safe to use whole branch source-dir to catch up.
+      # VERIFIED: Uses --source-dir force-app to push the whole branch
       - name: Execute Whole Branch Deploy Only
         if: steps.change_detector.outputs.constructive == 'true' && steps.change_detector.outputs.destructive == 'false'
         run: |
