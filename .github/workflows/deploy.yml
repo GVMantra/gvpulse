@@ -1,36 +1,12 @@
 name: GV-Pulse Workflow
 
 on:
-  pull_request:
-    branches:
-      - develop
-    types: [opened, synchronize, reopened]
   push:
     branches:
       - develop
 
 jobs:
-  auto_merge:
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-    concurrency:
-      group: gv-pulse-merge-${{ github.event.pull_request.number }}
-      cancel-in-progress: false
-    steps:
-      - name: Auto Merge Pull Request
-        env:
-          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
-        run: |
-          gh pr merge ${{ github.event.pull_request.number }} \
-            --merge \
-            --delete-branch \
-            --repo ${{ github.repository }}
-
   deploy_develop:
-    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -105,7 +81,6 @@ jobs:
             --wait 60
 
       # Case 2: Constructive updates ONLY (No deletions). Safe to use whole branch source-dir to catch up.
-      # VERIFIED: Uses --source-dir force-app to push the whole branch
       - name: Execute Whole Branch Deploy Only
         if: steps.change_detector.outputs.constructive == 'true' && steps.change_detector.outputs.destructive == 'false'
         run: |
