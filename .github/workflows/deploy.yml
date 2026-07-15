@@ -94,22 +94,26 @@ jobs:
             echo "destructive=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Execute Whole Branch Deploy (With Post-Destructive if applicable)
-        if: steps.change_detector.outputs.constructive == 'true'
+      # FIXED: Case 1 now uses --manifest instead of --source-dir when destructive changes are present
+      - name: Execute Combined Deploy (Additions + Deletions)
+        if: steps.change_detector.outputs.constructive == 'true' && steps.change_detector.outputs.destructive == 'true'
         run: |
-          if [ "${{ steps.change_detector.outputs.destructive }}" = "true" ]; then
-            sf project deploy start \
-              --source-dir force-app \
-              --post-destructive-changes delta/destructiveChanges/destructiveChanges.xml \
-              --target-org Gv_Pulse \
-              --wait 60
-          else
-            sf project deploy start \
-              --source-dir force-app \
-              --target-org Gv_Pulse \
-              --wait 60
-          fi
+          sf project deploy start \
+            --manifest delta/package/package.xml \
+            --post-destructive-changes delta/destructiveChanges/destructiveChanges.xml \
+            --target-org Gv_Pulse \
+            --wait 60
 
+      # Case 2: Constructive updates ONLY (No deletions). Safe to use whole branch source-dir to catch up.
+      - name: Execute Whole Branch Deploy Only
+        if: steps.change_detector.outputs.constructive == 'true' && steps.change_detector.outputs.destructive == 'false'
+        run: |
+          sf project deploy start \
+            --source-dir force-app \
+            --target-org Gv_Pulse \
+            --wait 60
+
+      # Case 3: Destructive ONLY changes (no new or modified files).
       - name: Execute Destructive Only Delta Deployment
         if: steps.change_detector.outputs.constructive == 'false' && steps.change_detector.outputs.destructive == 'true'
         run: |
@@ -133,5 +137,5 @@ jobs:
       - name: Notify on Deploy Failure
         if: failure()
         run: |
-          echo " CRITICAL ERROR: Deploy to Gv_Pulse failed after merge!"
+          echo "🚨 CRITICAL ERROR: Deploy to Gv_Pulse failed after merge!"
           echo "The develop branch and the target Salesforce Org are now OUT OF SYNC."
