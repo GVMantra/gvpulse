@@ -9,6 +9,8 @@
 .vscode/
 config/
 deploy-options.json
+scripts/
+.husky/
 
 # LWC VSCode autocomplete
 **/lwc/jsconfig.json
@@ -36,6 +38,8 @@ package.json
 sfdx-project.json
 package.json
 README.md
+.prettierignore
+.prettierrc
 
 # Eslint cache
 .eslintcache
