@@ -38,7 +38,7 @@
             <name>Prospect_Account</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
-                <leftValueReference>$Record.Account.RecordTypeId</leftValueReference>
+                <leftValueReference>Get_Account_Record.RecordTypeId</leftValueReference>
                 <operator>EqualTo</operator>
                 <rightValue>
                     <elementReference>Get_Prospect_Record_Type.Id</elementReference>
