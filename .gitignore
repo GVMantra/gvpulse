@@ -36,7 +36,6 @@ eslint.config.js
 jest.config.js
 package.json
 sfdx-project.json
-package.json
 README.md
 .prettierignore
 .prettierrc
