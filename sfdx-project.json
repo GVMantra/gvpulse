@@ -5,7 +5,7 @@
       "default": true
     }
   ],
-  "name": "gvpulse",
+  "name": "PULSE",
   "namespace": "",
   "sfdcLoginUrl": "https://login.salesforce.com",
   "sourceApiVersion": "67.0"
