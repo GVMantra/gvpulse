@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Block_Status_Change</fullName>
+    <active>true</active>
+    <description>Blocks status change when the parent account is on credit hold</description>
+    <errorConditionFormula>Account.Credit_Hold__c &amp;&amp; ISCHANGED( Status )</errorConditionFormula>
+    <errorDisplayField>Status</errorDisplayField>
+    <errorMessage>Cannot change status for this record because the parent account is currently on credit hold</errorMessage>
+</ValidationRule>
