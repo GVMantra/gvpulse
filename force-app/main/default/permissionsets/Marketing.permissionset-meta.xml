@@ -51,7 +51,6 @@
         <readable>true</readable>
     </fieldPermissions>
     <hasActivationRequired>false</hasActivationRequired>
-     <hasActivationRequired>false</hasActivationRequired>
     <label>Marketing</label>
     <license>Salesforce</license>
     <objectPermissions>
