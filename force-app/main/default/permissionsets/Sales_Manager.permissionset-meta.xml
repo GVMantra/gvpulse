@@ -4,15 +4,13 @@
         <application>Sales_App</application>
         <visible>true</visible>
     </applicationVisibilities>
-    
+
     <fieldPermissions>
         <editable>true</editable>
         <field>Account.Credit_Hold__c</field>
         <readable>true</readable>
     </fieldPermissions>
-
     <fieldPermissions>
-     <fieldPermissions>
         <editable>true</editable>
         <field>Opportunity.Budget_Amount__c</field>
         <readable>true</readable>
@@ -92,8 +90,8 @@
         <recordType>Account.Prospect</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
-    
-   
+
+
     <tabSettings>
         <tab>standard-Account</tab>
         <visibility>Visible</visibility>
