@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <applicationVisibilities>
+        <application>Sales_App</application>
+        <visible>true</visible>
+    </applicationVisibilities>
     
     <fieldPermissions>
         <editable>true</editable>
@@ -326,11 +330,7 @@
         <field>Lead.AnnualRevenue</field>
         <readable>true</readable>
     </fieldPermissions>
-    
-  
-   
-   
-   
+
     <fieldPermissions>
         <editable>false</editable>
         <field>Lead.CleanStatus</field>
@@ -361,6 +361,7 @@
         <field>Lead.DoNotCall</field>
         <readable>true</readable>
     </fieldPermissions>
+   
    
     <fieldPermissions>
         <editable>false</editable>
@@ -418,12 +419,26 @@
         <field>Lead.NumberOfEmployees</field>
         <readable>true</readable>
     </fieldPermissions>
-    
-   
-   
+  
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Lead.NumberofLocations__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+ 
     <fieldPermissions>
         <editable>false</editable>
         <field>Lead.Phone</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Lead.Primary__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Lead.ProductInterest__c</field>
         <readable>true</readable>
     </fieldPermissions>
     
@@ -607,7 +622,7 @@
         <viewAllFields>false</viewAllFields>
         <viewAllRecords>false</viewAllRecords>
     </objectPermissions>
-    
+
     <tabSettings>
         <tab>standard-Account</tab>
         <visibility>Visible</visibility>
