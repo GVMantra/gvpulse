@@ -92,10 +92,7 @@
         <recordType>Account.Prospect</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
-    <recordTypeVisibilities>
-        <recordType>Lead.Sales</recordType>
-        <visible>true</visible>
-    </recordTypeVisibilities>
+    
    
     <tabSettings>
         <tab>standard-Account</tab>
