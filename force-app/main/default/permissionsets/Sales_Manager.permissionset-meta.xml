@@ -12,7 +12,6 @@
     </fieldPermissions>
 
     <fieldPermissions>
-     <fieldPermissions>
         <editable>true</editable>
         <field>Opportunity.Budget_Amount__c</field>
         <readable>true</readable>
