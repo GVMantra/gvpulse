@@ -51,6 +51,7 @@
         <readable>true</readable>
     </fieldPermissions>
     <hasActivationRequired>false</hasActivationRequired>
+     <hasActivationRequired>false</hasActivationRequired>
     <label>Marketing</label>
     <license>Salesforce</license>
     <objectPermissions>
@@ -99,6 +100,7 @@
         <recordType>Lead.Marketing</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
+    
     <tabSettings>
         <tab>standard-Lead</tab>
         <visibility>Visible</visibility>

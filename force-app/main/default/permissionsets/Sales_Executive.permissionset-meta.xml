@@ -4,6 +4,7 @@
         <application>Sales_App</application>
         <visible>true</visible>
     </applicationVisibilities>
+    
     <fieldPermissions>
         <editable>true</editable>
         <field>Account.AccountNumber</field>
@@ -354,6 +355,7 @@
         <field>Lead.Budget_Flexibility__c</field>
         <readable>true</readable>
     </fieldPermissions>
+
     <fieldPermissions>
         <editable>false</editable>
         <field>Lead.CleanStatus</field>
@@ -389,6 +391,8 @@
         <field>Lead.Drop_Reason__c</field>
         <readable>true</readable>
     </fieldPermissions>
+   
+   
     <fieldPermissions>
         <editable>false</editable>
         <field>Lead.Email</field>
@@ -399,6 +403,7 @@
         <field>Lead.Expected_Close_Date__c</field>
         <readable>true</readable>
     </fieldPermissions>
+    
     <fieldPermissions>
         <editable>false</editable>
         <field>Lead.Fax</field>
@@ -459,11 +464,13 @@
         <field>Lead.Number_of_Emails__c</field>
         <readable>true</readable>
     </fieldPermissions>
+  
     <fieldPermissions>
         <editable>false</editable>
         <field>Lead.NumberofLocations__c</field>
         <readable>true</readable>
     </fieldPermissions>
+ 
     <fieldPermissions>
         <editable>false</editable>
         <field>Lead.Phone</field>
@@ -478,7 +485,8 @@
         <editable>false</editable>
         <field>Lead.ProductInterest__c</field>
         <readable>true</readable>
-    </fieldPermissions>
+    </fieldPermissions>    
+  
     <fieldPermissions>
         <editable>false</editable>
         <field>Lead.Pronouns</field>
@@ -494,6 +502,7 @@
         <field>Lead.Recycle_Reason__c</field>
         <readable>true</readable>
     </fieldPermissions>
+    
     <fieldPermissions>
         <editable>false</editable>
         <field>Lead.SICCode__c</field>
@@ -666,6 +675,7 @@
         <recordType>Lead.Sales</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
+
     <tabSettings>
         <tab>standard-Account</tab>
         <visibility>Visible</visibility>
