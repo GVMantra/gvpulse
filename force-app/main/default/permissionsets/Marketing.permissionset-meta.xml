@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
-    <hasActivationRequired>false</hasActivationRequired>
+     <hasActivationRequired>false</hasActivationRequired>
     <label>Marketing</label>
     <license>Salesforce</license>
     <objectPermissions>
@@ -33,6 +33,19 @@
         <viewAllFields>false</viewAllFields>
         <viewAllRecords>false</viewAllRecords>
     </objectPermissions>
+    <recordTypeVisibilities>
+        <recordType>Account.Customer</recordType>
+        <visible>true</visible>
+    </recordTypeVisibilities>
+    <recordTypeVisibilities>
+        <recordType>Account.Partner</recordType>
+        <visible>true</visible>
+    </recordTypeVisibilities>
+    <recordTypeVisibilities>
+        <recordType>Account.Prospect</recordType>
+        <visible>true</visible>
+    </recordTypeVisibilities>
+    
     <tabSettings>
         <tab>standard-Lead</tab>
         <visibility>Visible</visibility>
