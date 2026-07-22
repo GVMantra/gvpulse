@@ -330,36 +330,7 @@
         <field>Lead.AnnualRevenue</field>
         <readable>true</readable>
     </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Lead.Budget_Amount__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Lead.Budget_Approval_Stage__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Lead.Budget_Constraints__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Lead.Budget_Expiry_Date__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Lead.Budget_Flexibility__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    
-  
-   
-   
-   
+
     <fieldPermissions>
         <editable>false</editable>
         <field>Lead.CleanStatus</field>
@@ -390,20 +361,11 @@
         <field>Lead.DoNotCall</field>
         <readable>true</readable>
     </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Lead.Drop_Reason__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
+   
    
     <fieldPermissions>
         <editable>false</editable>
         <field>Lead.Email</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Lead.Expected_Close_Date__c</field>
         <readable>true</readable>
     </fieldPermissions>
     
@@ -457,24 +419,13 @@
         <field>Lead.NumberOfEmployees</field>
         <readable>true</readable>
     </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Lead.Number_of_Calls__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Lead.Number_of_Emails__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
+  
     <fieldPermissions>
         <editable>false</editable>
         <field>Lead.NumberofLocations__c</field>
         <readable>true</readable>
     </fieldPermissions>
-    
-   
-   
+ 
     <fieldPermissions>
         <editable>false</editable>
         <field>Lead.Phone</field>
@@ -500,11 +451,6 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>Lead.Rating</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Lead.Recycle_Reason__c</field>
         <readable>true</readable>
     </fieldPermissions>
     
