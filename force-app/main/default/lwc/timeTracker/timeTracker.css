@@ -1,0 +1,226 @@
+/* ===========================
+   Table Container
+=========================== */
+
+.table-container {
+    overflow: auto;
+    max-width: 100%;
+    max-height: 650px;
+    border: 1px solid #d8dde6;
+    border-radius: 10px;
+    background: #ffffff;
+}
+
+/* ===========================
+   Table
+=========================== */
+
+.time-table {
+    width: max-content;
+    min-width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: fixed;
+    font-size: 13px;
+    color: #181818;
+    background: #ffffff;
+}
+
+/* ===========================
+   Common Cells
+=========================== */
+
+.time-table th,
+.time-table td {
+    padding: 10px 8px;
+    border-right: 1px solid #dddbda;
+    border-bottom: 1px solid #dddbda;
+    text-align: center;
+    white-space: nowrap;
+    box-sizing: border-box;
+}
+
+/* ===========================
+   Header
+=========================== */
+
+.time-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 15;
+    background: #f3f3f3;
+    font-weight: 700;
+}
+
+/* ===========================
+   Footer
+=========================== */
+
+.time-table tfoot td {
+    position: sticky;
+    bottom: 0;
+    background: #fafaf9;
+    font-weight: 700;
+    z-index: 10;
+    border-top: 2px solid #d8dde6;
+}
+
+/* ===========================
+   Resource Column
+=========================== */
+
+.resource-column {
+    width: 220px;
+    min-width: 220px;
+    max-width: 220px;
+    text-align: left !important;
+    padding-left: 16px !important;
+    font-weight: 600;
+}
+
+/* ===========================
+   Sticky Column
+=========================== */
+
+.sticky-column {
+    position: sticky;
+    left: 0;
+    z-index: 12;
+    background: #ffffff;
+}
+
+thead .sticky-column {
+    background: #f3f3f3;
+    z-index: 20;
+}
+
+tfoot .sticky-column {
+    background: #fafaf9;
+}
+
+/* ===========================
+   Fixed Width Date Columns
+=========================== */
+
+.time-table thead th:not(.resource-column):not(.total-column),
+.time-table tbody td:not(.resource-column):not(.total-column),
+.time-table tfoot td:not(.resource-column):not(.total-column) {
+    width: 90px;
+    min-width: 90px;
+    max-width: 90px;
+}
+
+/* ===========================
+   Total Column
+=========================== */
+
+.total-column {
+    width: 100px;
+    min-width: 100px;
+    max-width: 100px;
+    background: #f7f7f7;
+    font-weight: 700;
+}
+
+/* ===========================
+   Header Text
+=========================== */
+
+.header-date {
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.header-day {
+    margin-top: 2px;
+    font-size: 11px;
+    color: #706e6b;
+}
+
+/* ===========================
+   Weekend
+=========================== */
+
+.weekend-header {
+    background: #ffe699 !important;
+}
+
+.weekend-cell {
+    background: #ffe699 !important;
+}
+
+/* ===========================
+   Zebra Rows
+=========================== */
+
+tbody tr:nth-child(even) td:not(.weekend-cell) {
+    background: #fcfcfc;
+}
+
+tbody tr:nth-child(even) .sticky-column {
+    background: #ffffff;
+}
+
+/* ===========================
+   Hover
+=========================== */
+
+tbody tr:hover td:not(.weekend-cell) {
+    background: #eef4ff;
+    transition: background 0.15s ease;
+}
+
+tbody tr:hover .sticky-column {
+    background: #eef4ff;
+}
+
+tbody tr:hover .weekend-cell {
+    background: #ffe699 !important;
+}
+
+/* ===========================
+   Rounded Corners
+=========================== */
+
+.time-table thead tr th:first-child {
+    border-top-left-radius: 10px;
+}
+
+.time-table thead tr th:last-child {
+    border-top-right-radius: 10px;
+}
+
+/* ===========================
+   Borders
+=========================== */
+
+.time-table th:last-child,
+.time-table td:last-child {
+    border-right: none;
+}
+
+.time-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* ===========================
+   Scrollbar
+=========================== */
+
+.table-container::-webkit-scrollbar {
+    height: 10px;
+    width: 10px;
+}
+
+.table-container::-webkit-scrollbar-track {
+    background: #f3f3f3;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+    background: #b8b8b8;
+    border-radius: 20px;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+    background: #909090;
+}

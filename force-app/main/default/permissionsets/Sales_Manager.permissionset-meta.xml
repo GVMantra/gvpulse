@@ -89,6 +89,7 @@
         <recordType>Account.Prospect</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
+
     <tabSettings>
         <tab>standard-Account</tab>
         <visibility>Visible</visibility>
