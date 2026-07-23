@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Recycle_Reason__c</fullName>
+    <label>Recycle Reason</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Unable to connect</fullName>
+                <default>false</default>
+                <label>Unable to connect</label>
+            </value>
+            <value>
+                <fullName>No Product Fit</fullName>
+                <default>false</default>
+                <label>No Product Fit</label>
+            </value>
+            <value>
+                <fullName>Internal Politics</fullName>
+                <default>false</default>
+                <label>Internal Politics</label>
+            </value>
+            <value>
+                <fullName>Doing Research</fullName>
+                <default>false</default>
+                <label>Doing Research</label>
+            </value>
+            <value>
+                <fullName>Not Required Today</fullName>
+                <default>false</default>
+                <label>Not Required Today</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>
