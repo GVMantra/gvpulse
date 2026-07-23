@@ -37,6 +37,36 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Account.AccountNumber</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Account.AccountSource</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Account.Active__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Account.AnnualRevenue</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Account.BillingAddress</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Account.CleanStatus</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Account.Credit_Hold__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -330,7 +360,6 @@
         <field>Lead.AnnualRevenue</field>
         <readable>true</readable>
     </fieldPermissions>
-
     <fieldPermissions>
         <editable>false</editable>
         <field>Lead.CleanStatus</field>
@@ -361,14 +390,11 @@
         <field>Lead.DoNotCall</field>
         <readable>true</readable>
     </fieldPermissions>
-   
-   
     <fieldPermissions>
         <editable>false</editable>
         <field>Lead.Email</field>
         <readable>true</readable>
     </fieldPermissions>
-    
     <fieldPermissions>
         <editable>false</editable>
         <field>Lead.Fax</field>
@@ -418,14 +444,12 @@
         <editable>false</editable>
         <field>Lead.NumberOfEmployees</field>
         <readable>true</readable>
-    </fieldPermissions>
-  
+    </fieldPermissions>  
     <fieldPermissions>
         <editable>false</editable>
         <field>Lead.NumberofLocations__c</field>
         <readable>true</readable>
     </fieldPermissions>
- 
     <fieldPermissions>
         <editable>false</editable>
         <field>Lead.Phone</field>
@@ -441,8 +465,6 @@
         <field>Lead.ProductInterest__c</field>
         <readable>true</readable>
     </fieldPermissions>
-    
-  
     <fieldPermissions>
         <editable>false</editable>
         <field>Lead.Pronouns</field>
@@ -453,7 +475,6 @@
         <field>Lead.Rating</field>
         <readable>true</readable>
     </fieldPermissions>
-    
     <fieldPermissions>
         <editable>false</editable>
         <field>Lead.SICCode__c</field>
