@@ -37,6 +37,36 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Account.AccountNumber</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Account.AccountSource</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Account.Active__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Account.AnnualRevenue</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Account.BillingAddress</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Account.CleanStatus</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Account.Credit_Hold__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -391,8 +421,7 @@
         <field>Lead.Drop_Reason__c</field>
         <readable>true</readable>
     </fieldPermissions>
-   
-   
+
     <fieldPermissions>
         <editable>false</editable>
         <field>Lead.Email</field>
@@ -465,12 +494,12 @@
         <readable>true</readable>
     </fieldPermissions>
   
+    </fieldPermissions>  
     <fieldPermissions>
         <editable>false</editable>
         <field>Lead.NumberofLocations__c</field>
         <readable>true</readable>
     </fieldPermissions>
- 
     <fieldPermissions>
         <editable>false</editable>
         <field>Lead.Phone</field>
@@ -485,8 +514,7 @@
         <editable>false</editable>
         <field>Lead.ProductInterest__c</field>
         <readable>true</readable>
-    </fieldPermissions>    
-  
+    </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
         <field>Lead.Pronouns</field>
@@ -675,7 +703,6 @@
         <recordType>Lead.Sales</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
-
     <tabSettings>
         <tab>standard-Account</tab>
         <visibility>Visible</visibility>

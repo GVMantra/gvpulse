@@ -4,7 +4,6 @@
         <application>Sales_App</application>
         <visible>true</visible>
     </applicationVisibilities>
-    
     <fieldPermissions>
         <editable>true</editable>
         <field>Account.Credit_Hold__c</field>
@@ -144,8 +143,6 @@
         <recordType>Lead.Sales</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
-    
-   
     <tabSettings>
         <tab>standard-Account</tab>
         <visibility>Visible</visibility>
