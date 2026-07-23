@@ -4,7 +4,6 @@
         <application>Sales_App</application>
         <visible>true</visible>
     </applicationVisibilities>
-    
     <fieldPermissions>
         <editable>true</editable>
         <field>Account.AccountNumber</field>
@@ -103,11 +102,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Account.Jigsaw</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Account.NaicsCode</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
