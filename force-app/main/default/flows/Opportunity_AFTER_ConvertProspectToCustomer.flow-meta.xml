@@ -2,52 +2,26 @@
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>67.0</apiVersion>
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
-    <assignments>
-        <name>Convert_Prospect_to_Customer</name>
-        <label>Convert Prospect to Customer</label>
-        <locationX>0</locationX>
-        <locationY>0</locationY>
-        <assignmentItems>
-            <assignToReference>Get_Account_Record.RecordTypeId</assignToReference>
-            <operator>Assign</operator>
-            <value>
-                <elementReference>Get_Customer_Record_Type.Id</elementReference>
-            </value>
-        </assignmentItems>
-        <connector>
-            <targetReference>Update_Account_Records</targetReference>
-        </connector>
-    </assignments>
-    <customErrors>
-        <name>Account_Record_Type_Update_Failed</name>
-        <label>Account Record Type Update Failed</label>
-        <locationX>0</locationX>
-        <locationY>0</locationY>
-        <customErrorMessages>
-            <errorMessage>The Account record type could not be updated to Customer</errorMessage>
-            <isFieldError>false</isFieldError>
-        </customErrorMessages>
-    </customErrors>
     <decisions>
-        <name>Is_Record_Type_Prospect</name>
-        <label>Is Record Type Prospect</label>
+        <name>is_Account_Prospect</name>
+        <label>is Account Prospect</label>
         <locationX>0</locationX>
         <locationY>0</locationY>
-        <defaultConnectorLabel>Not Prospect</defaultConnectorLabel>
+        <defaultConnectorLabel>No Account is not prospect</defaultConnectorLabel>
         <rules>
-            <name>Prospect_Record_Type</name>
+            <name>Yes_Account_is_Prospect</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
-                <leftValueReference>Get_Account_Record.RecordTypeId</leftValueReference>
+                <leftValueReference>$Record.Account.RecordType.DeveloperName</leftValueReference>
                 <operator>EqualTo</operator>
                 <rightValue>
-                    <elementReference>Get_Prospect_Record_Type.Id</elementReference>
+                    <stringValue>Prospect</stringValue>
                 </rightValue>
             </conditions>
             <connector>
-                <targetReference>Convert_Prospect_to_Customer</targetReference>
+                <targetReference>Update_Account_Record</targetReference>
             </connector>
-            <label>Prospect Record Type</label>
+            <label>Yes Account is Prospect</label>
         </rules>
     </decisions>
     <environments>Default</environments>
@@ -73,34 +47,13 @@
     </processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
     <recordLookups>
-        <name>Get_Account_Record</name>
-        <label>Get Account Record</label>
+        <name>get_customer_record_type</name>
+        <label>get customer record type</label>
         <locationX>0</locationX>
         <locationY>0</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>Get_Prospect_Record_Type</targetReference>
-        </connector>
-        <filterLogic>and</filterLogic>
-        <filters>
-            <field>Id</field>
-            <operator>EqualTo</operator>
-            <value>
-                <elementReference>$Record.AccountId</elementReference>
-            </value>
-        </filters>
-        <getFirstRecordOnly>true</getFirstRecordOnly>
-        <object>Account</object>
-        <storeOutputAutomatically>true</storeOutputAutomatically>
-    </recordLookups>
-    <recordLookups>
-        <name>Get_Customer_Record_Type</name>
-        <label>Get Customer Record Type</label>
-        <locationX>0</locationX>
-        <locationY>0</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
-        <connector>
-            <targetReference>Is_Record_Type_Prospect</targetReference>
+            <targetReference>is_Account_Prospect</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
@@ -121,68 +74,62 @@
         <object>RecordType</object>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
-    <recordLookups>
-        <name>Get_Prospect_Record_Type</name>
-        <label>Get Prospect Record Type</label>
-        <locationX>0</locationX>
-        <locationY>0</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
-        <connector>
-            <targetReference>Get_Customer_Record_Type</targetReference>
-        </connector>
-        <filterLogic>and</filterLogic>
-        <filters>
-            <field>SobjectType</field>
-            <operator>EqualTo</operator>
-            <value>
-                <stringValue>Account</stringValue>
-            </value>
-        </filters>
-        <filters>
-            <field>DeveloperName</field>
-            <operator>EqualTo</operator>
-            <value>
-                <stringValue>Prospect</stringValue>
-            </value>
-        </filters>
-        <getFirstRecordOnly>true</getFirstRecordOnly>
-        <object>RecordType</object>
-        <storeOutputAutomatically>true</storeOutputAutomatically>
-    </recordLookups>
     <recordUpdates>
-        <name>Update_Account_Records</name>
-        <label>Update Account Records</label>
+        <name>Update_Account_Record</name>
+        <label>Update Account Record</label>
         <locationX>0</locationX>
         <locationY>0</locationY>
-        <faultConnector>
-            <targetReference>Account_Record_Type_Update_Failed</targetReference>
-        </faultConnector>
-        <inputReference>Get_Account_Record</inputReference>
+        <inputAssignments>
+            <field>RecordTypeId</field>
+            <value>
+                <elementReference>get_customer_record_type.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record.Account</inputReference>
     </recordUpdates>
     <start>
         <locationX>0</locationX>
         <locationY>0</locationY>
         <connector>
-            <targetReference>Get_Account_Record</targetReference>
+            <targetReference>get_customer_record_type</targetReference>
         </connector>
-        <filterLogic>and</filterLogic>
-        <filters>
-            <field>StageName</field>
-            <operator>IsChanged</operator>
-            <value>
-                <booleanValue>true</booleanValue>
-            </value>
-        </filters>
-        <filters>
-            <field>StageName</field>
-            <operator>EqualTo</operator>
-            <value>
-                <stringValue>Closed Won</stringValue>
-            </value>
-        </filters>
+        <filterFormula>AND({!$Record.Account.RecordType.DeveloperName}=&quot;Prospect&quot;,
+         ISCHANGED({!$Record.StageName}),
+           TEXT({!$Record.StageName})=&quot;Closed Won&quot;,
+      {!$Setup.Bypass_validations__c.Bypass_Flows__c} = False)</filterFormula>
         <object>Opportunity</object>
         <recordTriggerType>Update</recordTriggerType>
         <triggerType>RecordAfterSave</triggerType>
     </start>
-    <status>Draft</status>
+    <status>Active</status>
+    <variables>
+        <name>currentItem_Find_customer_record</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>RecordType</objectType>
+    </variables>
+    <variables>
+        <name>currentItem_Find_the_prospect_record</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>RecordType</objectType>
+    </variables>
+    <variables>
+        <name>customerTypeId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>prospectTypeId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
 </Flow>
