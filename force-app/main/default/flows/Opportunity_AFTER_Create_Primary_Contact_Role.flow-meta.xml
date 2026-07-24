@@ -134,7 +134,9 @@
         <connector>
             <targetReference>Check_whether_opportunity_is_created_or_updated</targetReference>
         </connector>
-        <filterFormula>AND( NOT(ISBLANK( {!$Record.Primary_Contact__c} )),
+        <filterFormula>AND( 
+NOT( {!$Setup.Bypass_validations__c.Bypass_Flows__c} ),
+NOT(ISBLANK( {!$Record.Primary_Contact__c} )),
     OR(
         ISNEW(),
         ISCHANGED( {!$Record.Primary_Contact__c} )
