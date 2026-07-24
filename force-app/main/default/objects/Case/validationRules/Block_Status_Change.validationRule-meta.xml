@@ -3,7 +3,7 @@
     <fullName>Block_Status_Change</fullName>
     <active>true</active>
     <description>Blocks status change when the parent account is on credit hold</description>
-    <errorConditionFormula>Account.Credit_Hold__c &amp;&amp; ISCHANGED( Status )</errorConditionFormula>
+    <errorConditionFormula>NOT( $Setup.Bypass_validations__c.Bypass_Validation__c ) &amp;&amp; Account.Credit_Hold__c &amp;&amp; ISCHANGED( Status )</errorConditionFormula>
     <errorDisplayField>Status</errorDisplayField>
     <errorMessage>Cannot change status for this record because the parent account is currently on credit hold</errorMessage>
 </ValidationRule>
