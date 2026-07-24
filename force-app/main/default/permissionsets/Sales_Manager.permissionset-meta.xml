@@ -34,6 +34,11 @@
         <field>Opportunity.Budget_Flexibility__c</field>
         <readable>true</readable>
     </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Opportunity.Primary_Contact__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
     <hasActivationRequired>false</hasActivationRequired>
     <label>Sales Manager</label>
     <license>Salesforce</license>
@@ -89,7 +94,6 @@
         <recordType>Account.Prospect</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
-
     <tabSettings>
         <tab>standard-Account</tab>
         <visibility>Visible</visibility>
