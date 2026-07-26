@@ -1,0 +1,185 @@
+<template>
+
+    <lightning-card title="Jira Time Tracker" icon-name="standard:timesheet">
+
+        <!-- Filters -->
+        <div class="slds-p-around_medium">
+
+            <div class="slds-grid slds-wrap slds-gutters">
+
+                <!-- Start Date -->
+                <div class="slds-col slds-size_1-of-1 slds-large-size_3-of-12">
+                    <lightning-input
+                        data-id="startDate"
+                        type="date"
+                        label="Start Date"
+                        value={startDate}
+                        onchange={handleStartDate}>
+                    </lightning-input>
+                </div>
+
+                <!-- End Date -->
+                <div class="slds-col slds-size_1-of-1 slds-large-size_3-of-12">
+                    <lightning-input
+                        type="date"
+                        label="End Date"
+                        value={endDate}
+                        onchange={handleEndDate}>
+                    </lightning-input>
+                </div>
+
+                <!-- Project -->
+                <div class="slds-col slds-size_1-of-1 slds-large-size_4-of-12">
+                    <lightning-combobox
+                        label="Project"
+                        value={projectKey}
+                        options={projectOptions}
+                        placeholder="All Projects"
+                        onchange={handleProjectKey}>
+                    </lightning-combobox>
+                </div>
+
+                <!-- Refresh -->
+                <div class="slds-col slds-size_1-of-1 slds-large-size_2-of-12 slds-align-bottom">
+                    <lightning-button
+                        variant="brand"
+                        label="Refresh"
+                        onclick={loadData}>
+                    </lightning-button>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Spinner -->
+        <template if:true={isLoading}>
+            <lightning-spinner
+                alternative-text="Loading"
+                size="medium">
+            </lightning-spinner>
+        </template>
+
+        <!-- No Records -->
+        <template if:false={hasRows}>
+            <div class="slds-align_absolute-center slds-p-around_large">
+                No worklogs found.
+            </div>
+        </template>
+
+        <!-- Table -->
+        <template if:true={hasRows}>
+
+            <div class="table-container">
+
+                <table class="time-table">
+
+                    <thead>
+                        <tr>
+
+                            <th class="sticky-column resource-column">
+                                Resource
+                            </th>
+
+                            <template
+                                for:each={headers}
+                                for:item="header">
+
+                                <th
+                                    key={header.key}
+                                    class={header.className}>
+
+                                    <div class="header-date">
+                                        {header.label} {header.month}
+                                    </div>
+
+                                    <div class="header-day">
+                                        {header.dayName}
+                                    </div>
+
+                                </th>
+
+                            </template>
+
+                            <th class="total-column">
+                                Total
+                            </th>
+
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <template
+                            for:each={rows}
+                            for:item="row">
+
+                            <tr key={row.key}>
+
+                                <td class="sticky-column resource-column">
+                                    {row.resourceName}
+                                </td>
+
+                                <template
+                                    for:each={row.cells}
+                                    for:item="cell">
+
+                                    <td
+                                        key={cell.key}
+                                        class={cell.className}>
+
+                                        {cell.value}
+
+                                    </td>
+
+                                </template>
+
+                                <td class="total-column">
+                                    <strong>{row.total}</strong>
+                                </td>
+
+                            </tr>
+
+                        </template>
+
+                    </tbody>
+
+                    <tfoot>
+
+                        <tr>
+
+                            <td class="sticky-column resource-column">
+                                <strong>Total</strong>
+                            </td>
+
+                            <template
+                                for:each={footer}
+                                for:item="cell">
+
+                                <td
+                                    key={cell.key}
+                                    class={cell.className}>
+
+                                    <strong>{cell.value}</strong>
+
+                                </td>
+
+                            </template>
+
+                            <td class="total-column">
+                                <strong>{grandTotal}</strong>
+                            </td>
+
+                        </tr>
+
+                    </tfoot>
+
+                </table>
+
+            </div>
+
+        </template>
+
+    </lightning-card>
+
+</template>
