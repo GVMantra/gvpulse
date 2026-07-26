@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomApplication xmlns="http://soap.sforce.com/2006/04/metadata">
+    <brand>
+        <headerColor>#0070D2</headerColor>
+        <shouldOverrideOrgTheme>false</shouldOverrideOrgTheme>
+    </brand>
+    <description>A Lightning application that enables System Administrators to view and track Jira time logs for all resources. Displays daily logged hours in a resource-by-date matrix with support for a default 7-day view and custom date range filtering.</description>
+    <formFactors>Small</formFactors>
+    <formFactors>Large</formFactors>
+    <isNavAutoTempTabsDisabled>false</isNavAutoTempTabsDisabled>
+    <isNavPersonalizationDisabled>false</isNavPersonalizationDisabled>
+    <isNavTabPersistenceDisabled>false</isNavTabPersistenceDisabled>
+    <isOmniPinnedViewEnabled>false</isOmniPinnedViewEnabled>
+    <label>Jira</label>
+    <navType>Standard</navType>
+    <tabs>Time_Tracker</tabs>
+    <uiType>Lightning</uiType>
+    <utilityBar>Jira_UtilityBar</utilityBar>
+</CustomApplication>
