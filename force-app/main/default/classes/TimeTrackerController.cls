@@ -57,4 +57,49 @@ public with sharing class TimeTrackerController {
             projectKey
         );
     }
+    /**
+     * @description
+     * Returns the time logged by a specific resource, grouped by Jira User Story.
+     *
+     * @param startDate   Start of the date range.
+     * @param endDate     End of the date range.
+     * @param projectKey  Optional Jira project key.
+     * @param resourceName Name of the selected resource.
+     * @return StoryTimeTrackerResponse
+     */
+    @AuraEnabled(cacheable=true)
+    public static StoryTimeTrackerResponse getTimeByUserStory(
+        Date startDate,
+        Date endDate,
+        String projectKey,
+        String resourceName
+    ) {
+
+        if (startDate == null) {
+            startDate = Date.today().addDays(-6);
+        }
+
+        if (endDate == null) {
+            endDate = Date.today();
+        }
+
+        if (startDate > endDate) {
+            throw new AuraHandledException(
+                'Start Date cannot be greater than End Date.'
+            );
+        }
+
+        if (String.isBlank(resourceName)) {
+            throw new AuraHandledException(
+                'Resource Name is required.'
+            );
+        }
+
+        return JiraService.getTimeByUserStory(
+            startDate,
+            endDate,
+            projectKey,
+            resourceName
+        );
+    }
 }

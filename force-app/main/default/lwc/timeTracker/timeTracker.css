@@ -224,3 +224,8 @@ tbody tr:hover .weekend-cell {
 .table-container::-webkit-scrollbar-thumb:hover {
     background: #909090;
 }
+.resource-column lightning-button {
+    --slds-c-button-text-color: #0176d3;
+    --slds-c-button-text-color-hover: #014486;
+    font-weight: 600;
+}
