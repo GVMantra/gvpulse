@@ -12,6 +12,10 @@
     <hasActivationRequired>false</hasActivationRequired>
     <label>Jira Integration</label>
     <tabSettings>
+        <tab>Story_Time_Tracker</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
+    <tabSettings>
         <tab>Time_Tracker</tab>
         <visibility>Visible</visibility>
     </tabSettings>

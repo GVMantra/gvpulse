@@ -104,3 +104,50 @@
     min-width: 90px;
     max-width: 90px;
 }
+
+/* ===== Worklog hover tooltip ===== */
+
+.tracker-table tbody td:not(.resource-column):not(.total-column) {
+    position: relative;
+    overflow: visible;
+}
+
+.cell-inner {
+    position: relative;
+    display: inline-block;
+}
+
+.worklog-tooltip {
+    z-index: 9999;
+    background: #181818;
+    color: #fff;
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 11px;
+    font-weight: 400;
+    white-space: normal;
+    text-align: left;
+    min-width: 220px;
+    max-width: 340px;
+    max-height: 260px;
+    overflow-y: auto;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+    pointer-events: none;
+}
+
+.worklog-entry + .worklog-entry {
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid rgba(255,255,255,0.15);
+}
+
+.entry-time {
+    font-weight: 700;
+    color: #fff;
+}
+
+.entry-comment {
+    margin-top: 2px;
+    color: #d3d3d3;
+    white-space: pre-line;
+}
