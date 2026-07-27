@@ -165,9 +165,25 @@ export default class StoryTimeTracker extends LightningElement {
                 const value =
                     story.hoursByDate[header.key] ?? 0;
 
+                const rawEntries =
+                    story.entriesByDate?.[header.key] ?? [];
+
+                const entries = rawEntries.map((entry, index) => {
+
+                    return {
+                        key: `${story.issueKey}-${header.key}-${index}`,
+                        displayTime: entry.displayTime,
+                        timeSpentDisplay: entry.timeSpentDisplay,
+                        comment: entry.comment,
+                        hasComment:
+                            !!entry.comment && entry.comment.trim().length > 0
+                    };
+
+                });
+
                 cells.push({
 
-                    key: header.key,
+                    key: `${story.issueKey}-${header.key}`,
 
                     value:
                         Number(value) === 0
@@ -177,7 +193,13 @@ export default class StoryTimeTracker extends LightningElement {
                     className:
                         header.className === 'weekend-header'
                             ? 'weekend-cell'
-                            : ''
+                            : '',
+
+                    entries: entries,
+
+                    hasEntries: entries.length > 0,
+
+                    showTooltip: false
 
                 });
 
@@ -224,6 +246,69 @@ export default class StoryTimeTracker extends LightningElement {
             });
 
         });
+
+    }
+
+    handleCellMouseEnter(event) {
+
+        const key = event.currentTarget.dataset.key;
+        const rect = event.currentTarget.getBoundingClientRect();
+
+        const tooltipWidth = 340;
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+
+        // Center horizontally on the cell, clamped so it stays on-screen.
+        let left = rect.left + (rect.width / 2);
+        left = Math.min(
+            Math.max(left, (tooltipWidth / 2) + 8),
+            viewportWidth - (tooltipWidth / 2) - 8
+        );
+
+        // Prefer opening upward; fall back to downward if there isn't
+        // enough room above the cell (e.g. first row near the top).
+        const spaceAbove = rect.top;
+        const openUpward = spaceAbove > 150;
+
+        let tooltipStyle;
+
+        if (openUpward) {
+            tooltipStyle =
+                `position:fixed; left:${left}px; top:${rect.top - 8}px; ` +
+                `transform: translate(-50%, -100%);`;
+        } else {
+            tooltipStyle =
+                `position:fixed; left:${left}px; top:${rect.bottom + 8}px; ` +
+                `transform: translateX(-50%);`;
+        }
+
+        this.rows = this.rows.map(row => ({
+            ...row,
+            cells: row.cells.map(cell => {
+
+                if (cell.key !== key || !cell.hasEntries) {
+                    return cell;
+                }
+
+                return { ...cell, showTooltip: true, tooltipStyle };
+
+            })
+        }));
+
+    }
+
+    handleCellMouseLeave(event) {
+
+        const key = event.currentTarget.dataset.key;
+
+        this.rows = this.rows.map(row => ({
+            ...row,
+            cells: row.cells.map(cell =>
+                cell.key === key
+                    ? { ...cell, showTooltip: false }
+                    : cell
+            )
+        }));
 
     }
 
