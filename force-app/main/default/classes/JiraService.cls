@@ -403,5 +403,298 @@ public with sharing class JiraService {
         }
 
     }
+    public static StoryTimeTrackerResponse getTimeByUserStory(
+        Date startDate,
+        Date endDate,
+        String projectKey,
+        String resourceName
+    ){
+        String jql;
 
+    if (String.isBlank(projectKey)) {
+        jql =
+            'worklogDate >= "' + String.valueOf(startDate) + '"' +
+            ' AND worklogDate <= "' + String.valueOf(endDate) + '"';
+    } else {
+        jql =
+            'project = "' + projectKey + '"' +
+            ' AND worklogDate >= "' + String.valueOf(startDate) + '"' +
+            ' AND worklogDate <= "' + String.valueOf(endDate) + '"';
+    }
+     HttpRequest req = new HttpRequest();
+
+        req.setEndpoint(
+            NAMED_CREDENTIAL +
+            '/rest/api/3/search/jql?jql=' +
+            EncodingUtil.urlEncode(jql,'UTF-8') +
+            '&fields=summary,worklog'
+        );
+
+        req.setMethod('GET');
+        req.setHeader('Accept','application/json');
+        req.setTimeout(120000);
+
+        Http http = new Http();
+
+        HttpResponse res = http.send(req);
+
+        // Surface any non-success response back to the caller as an
+        // AuraHandledException so it can be displayed in the UI.
+        if(res.getStatusCode()!=200){
+
+            throw new AuraHandledException(
+                'Jira Error : ' +
+                res.getStatusCode() +
+                '\n' +
+                res.getBody()
+            );
+
+        }
+        Map<String,Object> response =
+            (Map<String,Object>)JSON.deserializeUntyped(res.getBody());
+        return buildStoryResponse(
+            response,
+            startDate,
+            endDate,
+            resourceName
+        );
+    }
+    private static StoryTimeTrackerResponse buildStoryResponse(
+
+    Map<String,Object> response,
+    Date startDate,
+    Date endDate,
+    String resourceName
+
+){
+
+    StoryTimeTrackerResponse result =
+        new StoryTimeTrackerResponse();
+
+    // Keyed by Jira issue key.
+    Map<String, StoryWrapper> storyMap =
+        new Map<String, StoryWrapper>();
+
+
+    //=========================
+    // Generate complete date range
+    //=========================
+
+    for(Date d = startDate; d <= endDate; d = d.addDays(1)){
+
+        StoryTimeTrackerResponse.DateHeader header =
+            new StoryTimeTrackerResponse.DateHeader();
+
+        header.dateValue = String.valueOf(d);
+
+        header.label = String.valueOf(d.day());
+
+        DateTime dt =
+            DateTime.newInstance(
+                d,
+                Time.newInstance(0,0,0,0)
+            );
+
+        header.month = dt.format('MMM');
+
+        header.dayName = dt.format('EEE');
+
+        Integer dayOfWeek =
+            Integer.valueOf(dt.format('u'));
+
+        header.isWeekend =
+            dayOfWeek == 6 || dayOfWeek == 7;
+
+        result.headers.add(header);
+
+        result.dateTotals.put(
+            header.dateValue,
+            0
+        );
+
+    }
+
+
+    List<Object> issues =
+        (List<Object>)response.get('issues');
+
+    if(issues == null){
+        return result;
+    }
+
+
+    //=========================
+    // Process Jira Issues
+    //=========================
+
+    for(Object issueObj : issues){
+
+        Map<String,Object> issue =
+            (Map<String,Object>)issueObj;
+
+        String issueKey =
+            (String)issue.get('key');
+
+        Map<String,Object> fields =
+            (Map<String,Object>)issue.get('fields');
+
+        if(fields == null){
+            continue;
+        }
+
+        String issueSummary =
+            (String)fields.get('summary');
+
+        Map<String,Object> worklog =
+            (Map<String,Object>)fields.get('worklog');
+
+        if(worklog == null){
+            continue;
+        }
+
+        List<Object> worklogs =
+            (List<Object>)worklog.get('worklogs');
+
+        if(worklogs == null){
+            continue;
+        }
+
+        // Process worklogs here...
+        for(Object worklogObj : worklogs){
+
+        Map<String,Object> wl =
+            (Map<String,Object>)worklogObj;
+
+        Map<String,Object> author =
+            (Map<String,Object>)wl.get('author');
+
+        if(author == null){
+            continue;
+        }
+
+        String currentResource =
+            (String)author.get('displayName');
+
+        // Only include worklogs for the selected resource.
+        if(currentResource != resourceName){
+            continue;
+        }
+
+        String started =
+            (String)wl.get('started');
+
+        Date workDate =
+            Date.valueOf(started.substring(0,10));
+
+        // Ignore worklogs outside the requested range.
+        if(workDate < startDate || workDate > endDate){
+            continue;
+        }
+
+        Decimal hours =
+            (((Decimal)wl.get('timeSpentSeconds')) / 3600).setScale(2);
+
+        String dateKey =
+            String.valueOf(workDate);
+
+        // Create StoryWrapper if it doesn't exist.
+        if(!storyMap.containsKey(issueKey)){
+
+            StoryWrapper story =
+                new StoryWrapper();
+
+            story.issueKey = issueKey;
+            story.issueSummary = issueSummary;
+
+            storyMap.put(
+                issueKey,
+                story
+            );
+
+        }
+
+        StoryWrapper story =
+            storyMap.get(issueKey);
+
+        // Update story total.
+        story.totalHours += hours;
+
+        // Update hours for this date.
+        if(!story.hoursByDate.containsKey(dateKey)){
+            story.hoursByDate.put(
+                dateKey,
+                0
+            );
+        }
+
+        story.hoursByDate.put(
+            dateKey,
+            story.hoursByDate.get(dateKey) + hours
+        );
+
+        // Update overall date total.
+        result.dateTotals.put(
+            dateKey,
+            result.dateTotals.get(dateKey) + hours
+        );
+
+        // Update grand total.
+        result.grandTotal += hours;
+
+    }
+    }
+    //=========================
+// Fill missing dates with 0
+//=========================
+
+    for(StoryWrapper story : storyMap.values()){
+
+        for(StoryTimeTrackerResponse.DateHeader header : result.headers){
+
+            if(!story.hoursByDate.containsKey(header.dateValue)){
+
+                story.hoursByDate.put(
+                    header.dateValue,
+                    0
+                );
+
+            }
+
+        }
+
+        result.stories.add(story);
+
+    }
+
+
+    //=========================
+    // Sort Stories
+    //=========================
+
+    result.stories.sort(new StorySorter());
+
+    return result;
+
+}
+/**
+ * @description
+ * Comparator used to sort StoryWrapper instances alphabetically
+ * by Jira issue key.
+ */
+public class StorySorter
+    implements Comparator<StoryWrapper>{
+
+    public Integer compare(
+        StoryWrapper a,
+        StoryWrapper b
+    ){
+
+        String keyA = a.issueKey == null ? '' : a.issueKey.toLowerCase();
+        String keyB = b.issueKey == null ? '' : b.issueKey.toLowerCase();
+
+        return keyA.compareTo(keyB);
+
+    }
+
+}
 }

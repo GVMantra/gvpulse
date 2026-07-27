@@ -232,45 +232,45 @@ private class TimeTrackerControllerTest {
      * HTTP Error
      * ----------------------------------------------------------
      */
-@IsTest
-static void testHttpError() {
+    @IsTest
+    static void testHttpError() {
 
-    Test.setMock(
-        HttpCalloutMock.class,
-        new ErrorMock()
-    );
-
-    Test.startTest();
-
-    Boolean exceptionThrown = false;
-
-    try {
-
-        TimeTrackerController.getTimeTrackerData(
-            Date.today(),
-            Date.today(),
-            null
+        Test.setMock(
+            HttpCalloutMock.class,
+            new ErrorMock()
         );
 
-    } catch (Exception ex) {
+        Test.startTest();
 
-        exceptionThrown = true;
+        Boolean exceptionThrown = false;
 
-        // AuraHandledException is surfaced as "Script-thrown exception"
-        // in Apex tests, so don't assert on the message.
-        System.assertNotEquals(null, ex);
+        try {
+
+            TimeTrackerController.getTimeTrackerData(
+                Date.today(),
+                Date.today(),
+                null
+            );
+
+        } catch (Exception ex) {
+
+            exceptionThrown = true;
+
+            // AuraHandledException is surfaced as "Script-thrown exception"
+            // in Apex tests, so don't assert on the message.
+            System.assertNotEquals(null, ex);
+
+        }
+
+        Test.stopTest();
+
+        System.assertEquals(
+            true,
+            exceptionThrown,
+            'Expected an exception to be thrown for HTTP 500 response.'
+        );
 
     }
-
-    Test.stopTest();
-
-    System.assertEquals(
-        true,
-        exceptionThrown,
-        'Expected an exception to be thrown for HTTP 500 response.'
-    );
-
-}
 
     /*
      * ----------------------------------------------------------
@@ -315,6 +315,227 @@ static void testHttpError() {
                 null,
                 null,
                 null
+            );
+
+        Test.stopTest();
+
+        System.assertNotEquals(
+            null,
+            response
+        );
+
+        System.assertEquals(
+            7,
+            response.headers.size()
+        );
+
+    }
+    @IsTest
+    static void testGetTimeByUserStorySuccess() {
+
+        Test.setMock(
+            HttpCalloutMock.class,
+            new JiraSuccessMock()
+        );
+
+        Test.startTest();
+
+        StoryTimeTrackerResponse response =
+            TimeTrackerController.getTimeByUserStory(
+                Date.newInstance(2026, 7, 20),
+                Date.newInstance(2026, 7, 21),
+                'PUL',
+                'John'
+            );
+
+        Test.stopTest();
+
+        System.assertEquals(
+            2,
+            response.headers.size()
+        );
+
+        System.assertEquals(
+            1,
+            response.stories.size()
+        );
+
+        System.assertEquals(
+            'PUL-1',
+            response.stories[0].issueKey
+        );
+
+        System.assertEquals(
+            'Development',
+            response.stories[0].issueSummary
+        );
+
+        System.assertEquals(
+            3,
+            response.stories[0].totalHours
+        );
+
+        System.assertEquals(
+            2,
+            response.stories[0].hoursByDate.get('2026-07-20')
+        );
+
+        System.assertEquals(
+            1,
+            response.stories[0].hoursByDate.get('2026-07-21')
+        );
+
+        System.assertEquals(
+            3,
+            response.grandTotal
+        );
+
+    }
+
+    @IsTest
+    static void testGetTimeByUserStoryEmptyResponse() {
+
+        Test.setMock(
+            HttpCalloutMock.class,
+            new EmptyMock()
+        );
+
+        Test.startTest();
+
+        StoryTimeTrackerResponse response =
+            TimeTrackerController.getTimeByUserStory(
+                Date.newInstance(2026, 7, 20),
+                Date.newInstance(2026, 7, 21),
+                'PUL',
+                'John'
+            );
+
+        Test.stopTest();
+
+        System.assertEquals(
+            0,
+            response.stories.size()
+        );
+
+        System.assertEquals(
+            2,
+            response.headers.size()
+        );
+
+        System.assertEquals(
+            0,
+            response.grandTotal
+        );
+
+    }
+
+    @IsTest
+    static void testGetTimeByUserStoryHttpError() {
+
+        Test.setMock(
+            HttpCalloutMock.class,
+            new ErrorMock()
+        );
+
+        Boolean exceptionThrown = false;
+
+        Test.startTest();
+
+        try {
+
+            TimeTrackerController.getTimeByUserStory(
+                Date.today(),
+                Date.today(),
+                'PUL',
+                'John'
+            );
+
+        } catch (Exception ex) {
+
+            exceptionThrown = true;
+            System.assertNotEquals(null, ex);
+
+        }
+
+        Test.stopTest();
+
+        System.assertEquals(
+            true,
+            exceptionThrown
+        );
+
+    }
+
+    @IsTest
+    static void testGetTimeByUserStoryInvalidDateRange() {
+
+        Boolean exceptionThrown = false;
+
+        try {
+
+            TimeTrackerController.getTimeByUserStory(
+                Date.today(),
+                Date.today().addDays(-1),
+                'PUL',
+                'John'
+            );
+
+        } catch (Exception ex) {
+
+            exceptionThrown = true;
+
+        }
+
+        System.assertEquals(
+            true,
+            exceptionThrown
+        );
+
+    }
+
+    @IsTest
+    static void testGetTimeByUserStoryBlankResource() {
+
+        Boolean exceptionThrown = false;
+
+        try {
+
+            TimeTrackerController.getTimeByUserStory(
+                Date.today(),
+                Date.today(),
+                'PUL',
+                ''
+            );
+
+        } catch (Exception ex) {
+
+            exceptionThrown = true;
+
+        }
+
+        System.assertEquals(
+            true,
+            exceptionThrown
+        );
+
+    }
+
+    @IsTest
+    static void testGetTimeByUserStoryNullDates() {
+
+        Test.setMock(
+            HttpCalloutMock.class,
+            new EmptyMock()
+        );
+
+        Test.startTest();
+
+        StoryTimeTrackerResponse response =
+            TimeTrackerController.getTimeByUserStory(
+                null,
+                null,
+                'PUL',
+                'John'
             );
 
         Test.stopTest();
