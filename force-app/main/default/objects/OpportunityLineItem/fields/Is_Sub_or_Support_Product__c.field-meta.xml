@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Is_Sub_or_Support_Product__c</fullName>
+    <description>Is product belongs to Subscription or support family</description>
+    <formula>ISPICKVAL(PricebookEntry.Product2.Family, &apos;Support&apos;) || ISPICKVAL(PricebookEntry.Product2.Family, &apos;Subscription&apos;)</formula>
+    <label>Is Sub or Support Product</label>
+    <type>Checkbox</type>
+</CustomField>
