@@ -1,8 +1,8 @@
-import { LightningElement, track } from 'lwc';
-import { NavigationMixin } from 'lightning/navigation';
-import getTimeTrackerData from '@salesforce/apex/TimeTrackerController.getTimeTrackerData';
+import { LightningElement, track, wire } from 'lwc';
+import { CurrentPageReference } from 'lightning/navigation';
+import getTimeByUserStory from '@salesforce/apex/TimeTrackerController.getTimeByUserStory';
 
-export default class TimeTracker extends NavigationMixin(LightningElement) {
+export default class StoryTimeTracker extends LightningElement {
 
     @track headers = [];
     @track rows = [];
@@ -12,28 +12,50 @@ export default class TimeTracker extends NavigationMixin(LightningElement) {
     endDate;
 
     // Default project
-    projectKey = 'PUL';
+    projectKey = '';
+
+    // Will be populated later via navigation from PUL-15
+    resourceName = '';
 
     grandTotal = '0h';
     isLoading = false;
 
-    // Project Picklist
-    projectOptions = [
-        { label: 'PUL', value: 'PUL' },
-        { label: 'NEST', value: 'NEST' }
-    ];
+    @wire(CurrentPageReference)
+    getStateParameters(currentPageReference) {
+
+        if (!currentPageReference?.state) {
+            return;
+        }
+        console.log('Hi' + JSON.stringify(currentPageReference.state));
+        const state = currentPageReference.state;
+
+        this.resourceName = state.c__resourceName || '';
+        this.projectKey = state.c__projectKey || 'PUL';
+        this.startDate = state.c__startDate || this.startDate;
+        this.endDate = state.c__endDate || this.endDate;
+
+        this.loadData();
+    }
 
     connectedCallback() {
 
-        const today = new Date();
-        const start = new Date();
+        if (!this.startDate || !this.endDate) {
 
-        start.setDate(today.getDate() - 6);
+            const today = new Date();
+            const start = new Date();
 
-        this.startDate = this.toInputDate(start);
-        this.endDate = this.toInputDate(today);
+            start.setDate(today.getDate() - 6);
 
-        this.loadData();
+            this.startDate = this.toInputDate(start);
+            this.endDate = this.toInputDate(today);
+        }
+
+        // Allow the @wire(CurrentPageReference)
+        // to populate values before loading data.
+        setTimeout(() => {
+            this.loadData();
+        }, 0);
+
     }
 
     get hasRows() {
@@ -48,10 +70,6 @@ export default class TimeTracker extends NavigationMixin(LightningElement) {
     handleEndDate(event) {
         this.endDate = event.target.value;
         this.validateDates();
-    }
-
-    handleProjectKey(event) {
-        this.projectKey = event.detail.value;
     }
 
     validateDates() {
@@ -92,21 +110,22 @@ export default class TimeTracker extends NavigationMixin(LightningElement) {
 
         try {
 
-            const result = await getTimeTrackerData({
+            const result = await getTimeByUserStory({
                 startDate: this.startDate,
                 endDate: this.endDate,
-                projectKey: this.projectKey
+                projectKey: this.projectKey,
+                resourceName: this.resourceName
             });
 
             this.buildHeaders(result.headers);
-            this.buildRows(result.resources);
+            this.buildRows(result.stories);
             this.buildFooter(result.dateTotals);
 
             this.grandTotal = this.formatHours(result.grandTotal);
 
         } catch (error) {
 
-            console.error('Error loading Jira Time Tracker', error);
+            console.error('Error loading Story Time Tracker', error);
 
         } finally {
 
@@ -135,24 +154,25 @@ export default class TimeTracker extends NavigationMixin(LightningElement) {
 
     }
 
-    buildRows(resources) {
+    buildRows(stories) {
 
-        this.rows = resources.map(resource => {
+        this.rows = stories.map(story => {
 
             const cells = [];
 
             this.headers.forEach(header => {
 
                 const value =
-                    resource.hoursByDate[header.key] ?? 0;
+                    story.hoursByDate[header.key] ?? 0;
 
                 cells.push({
 
                     key: header.key,
 
-                    value: Number(value) === 0
-                        ? ''
-                        : this.formatHours(value),
+                    value:
+                        Number(value) === 0
+                            ? ''
+                            : this.formatHours(value),
 
                     className:
                         header.className === 'weekend-header'
@@ -165,11 +185,13 @@ export default class TimeTracker extends NavigationMixin(LightningElement) {
 
             return {
 
-                key: resource.resourceName,
+                key: story.issueKey,
 
-                resourceName: resource.resourceName,
+                issueKey: story.issueKey,
 
-                total: this.formatHours(resource.totalHours),
+                issueSummary: story.issueSummary,
+
+                total: this.formatHours(story.totalHours),
 
                 cells: cells
 
@@ -247,24 +269,6 @@ export default class TimeTracker extends NavigationMixin(LightningElement) {
             String(date.getDate()).padStart(2, '0');
 
         return `${year}-${month}-${day}`;
-
-    }
-    handleResourceClick(event) {
-
-        const resourceName = event.currentTarget.dataset.resource;
-
-        this[NavigationMixin.Navigate]({
-            type: 'standard__navItemPage',
-            attributes: {
-                apiName: 'Story_Time_Tracker'
-            },
-            state: {
-                c__resourceName: resourceName,
-                c__projectKey: this.projectKey,
-                c__startDate: this.startDate,
-                c__endDate: this.endDate
-            }
-        });
 
     }
 
