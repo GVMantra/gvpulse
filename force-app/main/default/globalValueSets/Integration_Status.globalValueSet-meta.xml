@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customValue>
+        <fullName>Not Started</fullName>
+        <default>false</default>
+        <label>Not Started</label>
+    </customValue>
+    <customValue>
+        <fullName>In Progress</fullName>
+        <default>false</default>
+        <label>In Progress</label>
+    </customValue>
+    <customValue>
+        <fullName>Synced</fullName>
+        <default>false</default>
+        <label>Synced</label>
+    </customValue>
+    <customValue>
+        <fullName>Error</fullName>
+        <default>false</default>
+        <label>Error</label>
+    </customValue>
+    <customValue>
+        <fullName>Re-Sync</fullName>
+        <default>false</default>
+        <label>Re-Sync</label>
+    </customValue>
+    <customValue>
+        <fullName>Sync Not Required</fullName>
+        <default>false</default>
+        <label>Sync Not Required</label>
+    </customValue>
+    <description>Values for the Integration Status Field</description>
+    <masterLabel>Integration Status</masterLabel>
+    <sorted>false</sorted>
+</GlobalValueSet>
