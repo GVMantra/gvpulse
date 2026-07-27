@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <applicationVisibilities>
+        <application>Jira</application>
+        <visible>true</visible>
+    </applicationVisibilities>
+    <description>Grants access required for the Jira integration, including the Jira Lightning app, Time Tracker tab, and External Credential Principal for authenticated Jira API communication.</description>
+    <externalCredentialPrincipalAccesses>
+        <enabled>true</enabled>
+        <externalCredentialPrincipal>Jira_Integration-Jira Integration</externalCredentialPrincipal>
+    </externalCredentialPrincipalAccesses>
+    <hasActivationRequired>false</hasActivationRequired>
+    <label>Jira Integration</label>
+    <tabSettings>
+        <tab>Time_Tracker</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
+</PermissionSet>

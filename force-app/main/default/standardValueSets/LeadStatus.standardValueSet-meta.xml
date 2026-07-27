@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StandardValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sorted>false</sorted>
+    <standardValue>
+        <fullName>New Lead</fullName>
+        <default>true</default>
+        <label>New Lead</label>
+        <converted>false</converted>
+    </standardValue>
+    <standardValue>
+        <fullName>MQL</fullName>
+        <default>false</default>
+        <label>MQL</label>
+        <converted>false</converted>
+    </standardValue>
+    <standardValue>
+        <fullName>Sales Accepted</fullName>
+        <default>false</default>
+        <label>Sales Accepted</label>
+        <converted>false</converted>
+    </standardValue>
+    <standardValue>
+        <fullName>Unqualified</fullName>
+        <default>false</default>
+        <label>Unqualified</label>
+        <converted>false</converted>
+    </standardValue>
+    <standardValue>
+        <fullName>Converted</fullName>
+        <default>false</default>
+        <label>Converted</label>
+        <converted>true</converted>
+    </standardValue>
+    <standardValue>
+        <fullName>Customer Engaged</fullName>
+        <default>false</default>
+        <label>Customer Engaged</label>
+        <converted>false</converted>
+    </standardValue>
+    <standardValue>
+        <fullName>SQL</fullName>
+        <default>false</default>
+        <label>SQL</label>
+        <converted>false</converted>
+    </standardValue>
+</StandardValueSet>
