@@ -404,4 +404,513 @@ public with sharing class JiraService {
 
     }
 
+    /**
+     * @description
+     * Retrieves worklogs for a single resource within the given date range
+     * (optionally scoped to a project) and aggregates them by Jira User
+     * Story, including per-day worklog detail (time logged + comment) for
+     * the hover tooltip on the "Time Log by User Story" screen.
+     *
+     * @param startDate    Start of the date range (inclusive).
+     * @param endDate      End of the date range (inclusive).
+     * @param projectKey   Optional Jira project key to restrict the search.
+     * @param resourceName Display name of the resource to filter worklogs to.
+     * @return StoryTimeTrackerResponse containing date headers, per-story
+     *         hour breakdowns (with per-day worklog detail), date totals,
+     *         and the grand total of hours.
+     * @throws AuraHandledException if the callout to Jira does not return a
+     *         200 status code.
+     */
+    public static StoryTimeTrackerResponse getTimeByUserStory(
+        Date startDate,
+        Date endDate,
+        String projectKey,
+        String resourceName
+    ){
+        String jql;
+
+        if (String.isBlank(projectKey)) {
+            jql =
+                'worklogDate >= "' + String.valueOf(startDate) + '"' +
+                ' AND worklogDate <= "' + String.valueOf(endDate) + '"';
+        } else {
+            jql =
+                'project = "' + projectKey + '"' +
+                ' AND worklogDate >= "' + String.valueOf(startDate) + '"' +
+                ' AND worklogDate <= "' + String.valueOf(endDate) + '"';
+        }
+
+        HttpRequest req = new HttpRequest();
+
+        req.setEndpoint(
+            NAMED_CREDENTIAL +
+            '/rest/api/3/search/jql?jql=' +
+            EncodingUtil.urlEncode(jql,'UTF-8') +
+            '&fields=summary,worklog'
+        );
+
+        req.setMethod('GET');
+        req.setHeader('Accept','application/json');
+        req.setTimeout(120000);
+
+        Http http = new Http();
+
+        HttpResponse res = http.send(req);
+
+        // Surface any non-success response back to the caller as an
+        // AuraHandledException so it can be displayed in the UI.
+        if(res.getStatusCode()!=200){
+
+            throw new AuraHandledException(
+                'Jira Error : ' +
+                res.getStatusCode() +
+                '\n' +
+                res.getBody()
+            );
+
+        }
+
+        Map<String,Object> response =
+            (Map<String,Object>)JSON.deserializeUntyped(res.getBody());
+
+        return buildStoryResponse(
+            response,
+            startDate,
+            endDate,
+            resourceName
+        );
+    }
+
+    /**
+     * @description
+     * Transforms the raw, deserialized Jira search response into a
+     * StoryTimeTrackerResponse for a single resource, grouped by Jira User
+     * Story. For every worklog entry attributed to the selected resource,
+     * also builds a WorklogEntry (logged time + flattened comment) so the
+     * UI can show a per-day hover tooltip listing each individual worklog.
+     *
+     * @param response     Raw Jira response deserialized into a generic map
+     *                      (expected to contain an "issues" list).
+     * @param startDate    Start of the requested date range (inclusive).
+     * @param endDate      End of the requested date range (inclusive).
+     * @param resourceName Display name of the resource to filter worklogs to.
+     * @return A fully populated StoryTimeTrackerResponse ready to be
+     *         returned to the UI.
+     */
+    private static StoryTimeTrackerResponse buildStoryResponse(
+
+        Map<String,Object> response,
+        Date startDate,
+        Date endDate,
+        String resourceName
+
+    ){
+
+        StoryTimeTrackerResponse result =
+            new StoryTimeTrackerResponse();
+
+        // Keyed by Jira issue key.
+        Map<String, StoryWrapper> storyMap =
+            new Map<String, StoryWrapper>();
+
+
+        //=========================
+        // Generate complete date range
+        //=========================
+
+        for(Date d = startDate; d <= endDate; d = d.addDays(1)){
+
+            StoryTimeTrackerResponse.DateHeader header =
+                new StoryTimeTrackerResponse.DateHeader();
+
+            header.dateValue = String.valueOf(d);
+
+            header.label = String.valueOf(d.day());
+
+            DateTime dt =
+                DateTime.newInstance(
+                    d,
+                    Time.newInstance(0,0,0,0)
+                );
+
+            header.month = dt.format('MMM');
+
+            header.dayName = dt.format('EEE');
+
+            Integer dayOfWeek =
+                Integer.valueOf(dt.format('u'));
+
+            header.isWeekend =
+                dayOfWeek == 6 || dayOfWeek == 7;
+
+            result.headers.add(header);
+
+            result.dateTotals.put(
+                header.dateValue,
+                0
+            );
+
+        }
+
+
+        List<Object> issues =
+            (List<Object>)response.get('issues');
+
+        if(issues == null){
+            return result;
+        }
+
+
+        //=========================
+        // Process Jira Issues
+        //=========================
+
+        for(Object issueObj : issues){
+
+            Map<String,Object> issue =
+                (Map<String,Object>)issueObj;
+
+            String issueKey =
+                (String)issue.get('key');
+
+            Map<String,Object> fields =
+                (Map<String,Object>)issue.get('fields');
+
+            if(fields == null){
+                continue;
+            }
+
+            String issueSummary =
+                (String)fields.get('summary');
+
+            Map<String,Object> worklog =
+                (Map<String,Object>)fields.get('worklog');
+
+            if(worklog == null){
+                continue;
+            }
+
+            List<Object> worklogs =
+                (List<Object>)worklog.get('worklogs');
+
+            if(worklogs == null){
+                continue;
+            }
+
+            // Process each individual worklog entry on this issue.
+            for(Object worklogObj : worklogs){
+
+                Map<String,Object> wl =
+                    (Map<String,Object>)worklogObj;
+
+                Map<String,Object> author =
+                    (Map<String,Object>)wl.get('author');
+
+                if(author == null){
+                    continue;
+                }
+
+                String currentResource =
+                    (String)author.get('displayName');
+
+                // Only include worklogs for the selected resource.
+                if(currentResource != resourceName){
+                    continue;
+                }
+
+                String started =
+                    (String)wl.get('started');
+
+                Date workDate =
+                    Date.valueOf(started.substring(0,10));
+
+                // Ignore worklogs outside the requested range.
+                if(workDate < startDate || workDate > endDate){
+                    continue;
+                }
+
+                Decimal hours =
+                    (((Decimal)wl.get('timeSpentSeconds')) / 3600).setScale(2);
+
+                String dateKey =
+                    String.valueOf(workDate);
+
+                // Create StoryWrapper if it doesn't exist.
+                if(!storyMap.containsKey(issueKey)){
+
+                    StoryWrapper story =
+                        new StoryWrapper();
+
+                    story.issueKey = issueKey;
+                    story.issueSummary = issueSummary;
+
+                    storyMap.put(
+                        issueKey,
+                        story
+                    );
+
+                }
+
+                StoryWrapper story =
+                    storyMap.get(issueKey);
+
+                // Update story total.
+                story.totalHours += hours;
+
+                // Update hours for this date.
+                if(!story.hoursByDate.containsKey(dateKey)){
+                    story.hoursByDate.put(
+                        dateKey,
+                        0
+                    );
+                }
+
+                story.hoursByDate.put(
+                    dateKey,
+                    story.hoursByDate.get(dateKey) + hours
+                );
+
+                //=========================
+                // Build per-day worklog detail for the hover tooltip
+                // (logged time + flattened comment).
+                //=========================
+
+                String created = (String)wl.get('created');
+
+                WorklogEntry entry = new WorklogEntry();
+                entry.startedRaw = created;
+                entry.displayTime = formatDisplayTime(created);
+                entry.timeSpentDisplay = (String)wl.get('timeSpent');
+                entry.comment = extractCommentText(wl.get('comment'));
+
+                if(!story.entriesByDate.containsKey(dateKey)){
+                    story.entriesByDate.put(dateKey, new List<WorklogEntry>());
+                }
+
+                story.entriesByDate.get(dateKey).add(entry);
+
+                // Update overall date total.
+                result.dateTotals.put(
+                    dateKey,
+                    result.dateTotals.get(dateKey) + hours
+                );
+
+                // Update grand total.
+                result.grandTotal += hours;
+
+            }
+        }
+
+        //=========================
+        // Fill missing dates with 0
+        //=========================
+
+        for(StoryWrapper story : storyMap.values()){
+
+            for(StoryTimeTrackerResponse.DateHeader header : result.headers){
+
+                if(!story.hoursByDate.containsKey(header.dateValue)){
+
+                    story.hoursByDate.put(
+                        header.dateValue,
+                        0
+                    );
+
+                }
+
+            }
+
+            result.stories.add(story);
+
+        }
+
+
+        //=========================
+        // Sort Stories
+        //=========================
+
+        result.stories.sort(new StorySorter());
+
+        return result;
+
+    }
+
+    /**
+     * @description
+     * Comparator used to sort StoryWrapper instances alphabetically
+     * by Jira issue key.
+     */
+    public class StorySorter
+        implements Comparator<StoryWrapper>{
+
+        public Integer compare(
+            StoryWrapper a,
+            StoryWrapper b
+        ){
+
+            String keyA = a.issueKey == null ? '' : a.issueKey.toLowerCase();
+            String keyB = b.issueKey == null ? '' : b.issueKey.toLowerCase();
+
+            return keyA.compareTo(keyB);
+
+        }
+
+    }
+
+    /**
+     * @description
+     * Extracts the local clock time (e.g. "1:50 PM") from a Jira "started"
+     * timestamp string like "2026-07-23T13:50:00.000+0530". The literal
+     * local time is read directly out of the string rather than parsed into
+     * an Apex DateTime, since DateTime would convert into the running
+     * user's org timezone and could show a misleading time to the user.
+     *
+     * @param started Raw Jira "started" timestamp string.
+     * @return Formatted 12-hour clock time (e.g. "1:50 PM"), or an empty
+     *         string if the input is blank or malformed.
+     */
+    private static String formatDisplayTime(String dateTimeString){
+
+        if(String.isBlank(dateTimeString) || dateTimeString.length() < 10){
+            return '';
+        }
+
+        Date worklogDate = Date.valueOf(dateTimeString.substring(0, 10));
+
+        DateTime dt = DateTime.newInstance(
+            worklogDate,
+            Time.newInstance(0, 0, 0, 0)
+        );
+
+        return dt.format('dd MMM yyyy');
+    }
+
+    /**
+     * @description
+     * Flattens a Jira ADF (Atlassian Document Format) comment body into
+     * plain text. Recurses through nested structures — paragraphs,
+     * ordered/bullet lists, and list items — so multi-line and
+     * numbered/bulleted comments are fully captured, not just single-level
+     * paragraphs. Returns an empty string for null, empty, or malformed
+     * comment structures.
+     *
+     * @param commentObj Raw "comment" value from a worklog entry, expected
+     *                    to be a Map representing an ADF document.
+     * @return Plain-text version of the comment, with each top-level block
+     *         (paragraph or list item) on its own line.
+     */
+    private static String extractCommentText(Object commentObj){
+
+        if(commentObj == null){
+            return '';
+        }
+
+        Map<String,Object> commentDoc = (Map<String,Object>)commentObj;
+
+        List<Object> content = (List<Object>)commentDoc.get('content');
+
+        List<String> lines = new List<String>();
+
+        extractLinesFromNodes(content, lines);
+
+        return String.join(lines,'\n');
+
+    }
+
+    /**
+     * @description
+     * Recursively walks a list of ADF nodes, collecting one plain-text line
+     * per leaf-level block (paragraph or list item), and prefixing list
+     * items with a bullet for readability in the tooltip.
+     *
+     * @param nodes List of ADF node maps (may be null).
+     * @param lines Accumulator list that resulting lines are appended to.
+     */
+    private static void extractLinesFromNodes(List<Object> nodes, List<String> lines){
+
+        if(nodes == null){
+            return;
+        }
+
+        for(Object nodeObj : nodes){
+
+            Map<String,Object> node = (Map<String,Object>)nodeObj;
+
+            String nodeType = (String)node.get('type');
+            List<Object> nodeContent = (List<Object>)node.get('content');
+
+            if(nodeType == 'paragraph'){
+
+                String text = extractTextFromInline(nodeContent);
+
+                if(String.isNotBlank(text)){
+                    lines.add(text);
+                }
+
+            } else if(nodeType == 'listItem'){
+
+                // A list item's content is itself a list of block nodes
+                // (usually a single paragraph) — recurse, then prefix the
+                // first resulting line with a bullet marker.
+                List<String> itemLines = new List<String>();
+                extractLinesFromNodes(nodeContent, itemLines);
+
+                for(Integer i = 0; i < itemLines.size(); i++){
+                    lines.add('• ' + itemLines[i]);
+                }
+
+            } else if(nodeType == 'orderedList' || nodeType == 'bulletList'){
+
+                // Recurse into the list's items directly.
+                extractLinesFromNodes(nodeContent, lines);
+
+            } else if(nodeContent != null){
+
+                // Any other container node (blockquote, panel, etc.) —
+                // recurse defensively so nested text still surfaces.
+                extractLinesFromNodes(nodeContent, lines);
+
+            }
+
+        }
+
+    }
+
+    /**
+     * @description
+     * Extracts and concatenates the plain text from a paragraph's inline
+     * content, converting hardBreak nodes into newlines so multi-line
+     * paragraphs (shift+enter in Jira) are preserved. Text nodes with
+     * formatting marks (bold, italic, etc.) are read the same as plain
+     * text nodes — marks are ignored for plain-text extraction.
+     *
+     * @param inlineNodes List of inline ADF node maps (text, hardBreak, etc.).
+     * @return Concatenated plain text for the paragraph.
+     */
+    private static String extractTextFromInline(List<Object> inlineNodes){
+
+        if(inlineNodes == null){
+            return '';
+        }
+
+        List<String> parts = new List<String>();
+
+        for(Object nodeObj : inlineNodes){
+
+            Map<String,Object> node = (Map<String,Object>)nodeObj;
+
+            String nodeType = (String)node.get('type');
+
+            if(nodeType == 'text'){
+                parts.add((String)node.get('text'));
+            } else if(nodeType == 'hardBreak'){
+                parts.add('\n');
+            }
+
+        }
+
+        return String.join(parts,'');
+
+    }
+
 }

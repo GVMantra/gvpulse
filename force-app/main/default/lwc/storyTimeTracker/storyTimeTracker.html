@@ -1,34 +1,24 @@
 <template>
 
-    <lightning-card title="Jira Time Tracker" icon-name="standard:timesheet">
+    <lightning-card title="Time Log by User Story">
 
-        <!-- Filters -->
         <div class="slds-p-around_medium">
 
             <div class="slds-grid slds-wrap slds-gutters">
 
-                <!-- Start Date -->
-                <div class="slds-col slds-size_1-of-1 slds-large-size_3-of-12">
-                    <lightning-input data-id="startDate" type="date" label="Start Date" value={startDate}
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_2-of-12">
+                    <lightning-input type="date" label="Start Date" value={startDate} data-id="startDate"
                         onchange={handleStartDate}>
                     </lightning-input>
                 </div>
 
-                <!-- End Date -->
-                <div class="slds-col slds-size_1-of-1 slds-large-size_3-of-12">
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_2-of-12">
                     <lightning-input type="date" label="End Date" value={endDate} onchange={handleEndDate}>
                     </lightning-input>
                 </div>
 
-                <!-- Project -->
-                <div class="slds-col slds-size_1-of-1 slds-large-size_4-of-12">
-                    <lightning-combobox label="Project" value={projectKey} options={projectOptions}
-                        placeholder="All Projects" onchange={handleProjectKey}>
-                    </lightning-combobox>
-                </div>
 
-                <!-- Refresh -->
-                <div class="slds-col slds-size_1-of-1 slds-large-size_2-of-12 slds-align-bottom">
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_3-of-12 slds-align-bottom">
                     <lightning-button variant="brand" label="Refresh" onclick={loadData}>
                     </lightning-button>
                 </div>
@@ -37,31 +27,22 @@
 
         </div>
 
-        <!-- Spinner -->
         <template if:true={isLoading}>
             <lightning-spinner alternative-text="Loading" size="medium">
             </lightning-spinner>
         </template>
 
-        <!-- No Records -->
-        <template if:false={hasRows}>
-            <div class="slds-align_absolute-center slds-p-around_large">
-                No worklogs found.
-            </div>
-        </template>
-
-        <!-- Table -->
         <template if:true={hasRows}>
 
             <div class="table-container">
 
-                <table class="time-table">
+                <table class="tracker-table">
 
                     <thead>
                         <tr>
 
                             <th class="sticky-column resource-column">
-                                Resource
+                                User Story
                             </th>
 
                             <template for:each={headers} for:item="header">
@@ -93,26 +74,59 @@
 
                             <tr key={row.key}>
 
-                                <td class="sticky-column resource-column">
+                                <td class="sticky-column resource-column" title={row.issueSummary}>
 
-                                    <lightning-button variant="base" label={row.resourceName}
-                                        data-resource={row.resourceName} onclick={handleResourceClick}>
-                                    </lightning-button>
+                                    <span class="story-link">
+                                        {row.issueKey}
+                                    </span>
 
                                 </td>
 
                                 <template for:each={row.cells} for:item="cell">
 
-                                    <td key={cell.key} class={cell.className}>
+                                    <td key={cell.key} class={cell.className} data-key={cell.key}
+                                        onmouseenter={handleCellMouseEnter} onmouseleave={handleCellMouseLeave}>
 
-                                        {cell.value}
+                                        <div class="cell-inner">
+
+                                            {cell.value}
+
+                                            <template if:true={cell.showTooltip}>
+
+                                                <div class="worklog-tooltip" style={cell.tooltipStyle}>
+
+                                                    <template for:each={cell.entries} for:item="entry">
+
+                                                        <div key={entry.key} class="worklog-entry">
+
+                                                            <div class="entry-time">
+                                                                {entry.displayTime}
+                                                            </div>
+
+                                                            <template if:true={entry.hasComment}>
+                                                                <div class="entry-comment">
+                                                                    {entry.comment}
+                                                                </div>
+                                                            </template>
+
+                                                        </div>
+
+                                                    </template>
+
+                                                </div>
+
+                                            </template>
+
+                                        </div>
 
                                     </td>
 
                                 </template>
 
                                 <td class="total-column">
-                                    <strong>{row.total}</strong>
+
+                                    {row.total}
+
                                 </td>
 
                             </tr>
@@ -125,22 +139,26 @@
 
                         <tr>
 
-                            <td class="sticky-column resource-column">
-                                <strong>Total</strong>
+                            <td class="sticky-column resource-column footer-cell">
+
+                                Total
+
                             </td>
 
                             <template for:each={footer} for:item="cell">
 
                                 <td key={cell.key} class={cell.className}>
 
-                                    <strong>{cell.value}</strong>
+                                    {cell.value}
 
                                 </td>
 
                             </template>
 
-                            <td class="total-column">
-                                <strong>{grandTotal}</strong>
+                            <td class="total-column footer-cell">
+
+                                {grandTotal}
+
                             </td>
 
                         </tr>
