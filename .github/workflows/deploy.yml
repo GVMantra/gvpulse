@@ -70,7 +70,7 @@ jobs:
             echo "destructive=false" >> $GITHUB_OUTPUT
           fi
 
-      # Case 1: Both Constructive AND Destructive Changes Exist (Uses delta manifest)
+      # Case 1: Both Constructive AND Destructive Changes Exist
       - name: Execute Combined Deploy (Additions + Deletions)
         if: steps.change_detector.outputs.constructive == 'true' && steps.change_detector.outputs.destructive == 'true'
         run: |
@@ -78,18 +78,20 @@ jobs:
             --manifest delta/package/package.xml \
             --post-destructive-changes delta/destructiveChanges/destructiveChanges.xml \
             --target-org Gv_Pulse \
+            --test-level RunRelevantTests \
             --wait 60
 
-      # Case 2: Constructive updates ONLY (No deletions). Safe to use whole branch source-dir to catch up.
+      # Case 2: Constructive updates ONLY (Whole branch catch-up)
       - name: Execute Whole Branch Deploy Only
         if: steps.change_detector.outputs.constructive == 'true' && steps.change_detector.outputs.destructive == 'false'
         run: |
           sf project deploy start \
             --source-dir force-app \
             --target-org Gv_Pulse \
+            --test-level RunRelevantTests \
             --wait 60
 
-      # Case 3: Destructive ONLY changes (no new or modified files).
+      # Case 3: Destructive ONLY changes
       - name: Execute Destructive Only Delta Deployment
         if: steps.change_detector.outputs.constructive == 'false' && steps.change_detector.outputs.destructive == 'true'
         run: |
@@ -97,6 +99,7 @@ jobs:
             --manifest delta/package/package.xml \
             --post-destructive-changes delta/destructiveChanges/destructiveChanges.xml \
             --target-org Gv_Pulse \
+            --test-level RunRelevantTests \
             --wait 60
 
       - name: No Changes Detected
