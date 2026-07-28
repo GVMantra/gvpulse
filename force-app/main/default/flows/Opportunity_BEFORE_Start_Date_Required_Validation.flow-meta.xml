@@ -2,6 +2,21 @@
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>67.0</apiVersion>
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <collectionProcessors>
+        <name>Filter_OLIs_with_required_Family</name>
+        <elementSubtype>FilterCollectionProcessor</elementSubtype>
+        <label>Filter OLIs with required Family</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNextValueToReference>currentItem_Filter_OLIs_with_required_Family</assignNextValueToReference>
+        <collectionProcessorType>FilterCollectionProcessor</collectionProcessorType>
+        <collectionReference>Get_OLIs</collectionReference>
+        <conditionLogic>formula_evaluates_to_true</conditionLogic>
+        <connector>
+            <targetReference>Check_if_Line_items_are_null</targetReference>
+        </connector>
+        <formula>ISPICKVAL( {!currentItem_Filter_OLIs_with_required_Family.Product2.Family} , &apos;Support&apos; ) || ISPICKVAL( {!currentItem_Filter_OLIs_with_required_Family.Product2.Family} , &apos;Subscription&apos; )</formula>
+    </collectionProcessors>
     <customErrors>
         <name>Make_start_date_required</name>
         <label>Make start date required</label>
@@ -23,8 +38,15 @@
             <name>Line_Items_exists</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
-                <leftValueReference>Get_OLIs</leftValueReference>
+                <leftValueReference>Filter_OLIs_with_required_Family</leftValueReference>
                 <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Filter_OLIs_with_required_Family</leftValueReference>
+                <operator>IsEmpty</operator>
                 <rightValue>
                     <booleanValue>false</booleanValue>
                 </rightValue>
@@ -35,10 +57,10 @@
             <label>Line Items exists</label>
         </rules>
     </decisions>
-    <description>Make Start date required if the related product belongs to Family of subscription or support</description>
+    <description>Make start date required if there exists at least 1 product from Subscription or Support Family</description>
     <environments>Default</environments>
-    <interviewLabel>Opportunity-BEFORE-Validate Start Date To Required {!$Flow.CurrentDateTime}</interviewLabel>
-    <label>Opportunity-BEFORE-Validate Start Date To Required</label>
+    <interviewLabel>Opportunity-BEFORE-Start Date Required Validation {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Opportunity-BEFORE-Start Date Required Validation</label>
     <processMetadataValues>
         <name>BuilderType</name>
         <value>
@@ -66,7 +88,7 @@
         <locationY>0</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>Check_if_Line_items_are_null</targetReference>
+            <targetReference>Filter_OLIs_with_required_Family</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
@@ -76,14 +98,7 @@
                 <elementReference>$Record.Id</elementReference>
             </value>
         </filters>
-        <filters>
-            <field>Is_Sub_or_Support_Product__c</field>
-            <operator>EqualTo</operator>
-            <value>
-                <booleanValue>true</booleanValue>
-            </value>
-        </filters>
-        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
         <object>OpportunityLineItem</object>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
@@ -100,11 +115,11 @@
     </start>
     <status>Active</status>
     <variables>
-        <name>StoreProductsId</name>
+        <name>currentItem_Filter_OLIs_with_required_Family</name>
         <dataType>SObject</dataType>
-        <isCollection>true</isCollection>
+        <isCollection>false</isCollection>
         <isInput>false</isInput>
         <isOutput>false</isOutput>
-        <objectType>Product2</objectType>
+        <objectType>OpportunityLineItem</objectType>
     </variables>
 </Flow>
