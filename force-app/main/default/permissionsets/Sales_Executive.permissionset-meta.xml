@@ -69,6 +69,7 @@
         <field>Account.Industry</field>
         <readable>true</readable>
     </fieldPermissions>
+    
     <fieldPermissions>
         <editable>true</editable>
         <field>Account.Jigsaw</field>
@@ -392,6 +393,11 @@
     </fieldPermissions>
 
     <fieldPermissions>
+        <editable>true</editable>
+        <field>Lead.Drop_Reason__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>false</editable>
         <field>Lead.Email</field>
         <readable>true</readable>
@@ -402,6 +408,11 @@
         <readable>true</readable>
     </fieldPermissions>
     
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Lead.Expected_Close_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
         <field>Lead.Fax</field>
@@ -464,6 +475,16 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
+        <field>Lead.Number_of_Calls__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Lead.Number_of_Emails__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>Lead.NumberofLocations__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -499,6 +520,11 @@
         <readable>true</readable>
     </fieldPermissions>
     
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Lead.Recycle_Reason__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
         <field>Lead.SICCode__c</field>
