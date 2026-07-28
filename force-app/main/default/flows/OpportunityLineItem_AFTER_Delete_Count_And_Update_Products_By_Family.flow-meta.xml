@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>67.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <environments>Default</environments>
+    <interviewLabel>OpportunityLineItem-AFTER-Delete-Count And Update Products By Family {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>OpportunityLineItem-AFTER-Delete-Count And Update Products By Family</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Count_Products</targetReference>
+        </connector>
+        <filterFormula>NOT({!$Setup.Bypass_validations__c.Bypass_Flows__c})</filterFormula>
+        <object>OpportunityLineItem</object>
+        <recordTriggerType>Delete</recordTriggerType>
+        <triggerType>RecordBeforeDelete</triggerType>
+    </start>
+    <status>Active</status>
+    <subflows>
+        <description>Count Products and populate them on opportunity by family</description>
+        <name>Count_Products</name>
+        <label>Count Products</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <flowName>OpportunityLineItem_SUBFLOW_Count_Total_Products_By_Family</flowName>
+        <inputAssignments>
+            <name>DeletedOliId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>OpportunityId</name>
+            <value>
+                <elementReference>$Record.OpportunityId</elementReference>
+            </value>
+        </inputAssignments>
+    </subflows>
+</Flow>
