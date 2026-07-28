@@ -135,21 +135,6 @@
             </connector>
             <label>Is Hardware</label>
         </rules>
-        <rules>
-            <name>Is_deleted</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>Loop_on_Opportunity_Products.Id</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <elementReference>DeletedOliId</elementReference>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>Loop_on_Opportunity_Products</targetReference>
-            </connector>
-            <label>Is deleted</label>
-        </rules>
     </decisions>
     <description>This is a subflow which will be called from other flow</description>
     <environments>Default</environments>
