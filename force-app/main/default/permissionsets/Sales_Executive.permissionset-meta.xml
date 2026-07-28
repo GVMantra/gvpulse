@@ -639,11 +639,6 @@
         <field>Opportunity.Type</field>
         <readable>true</readable>
     </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
-        <field>OpportunityLineItem.Is_Sub_or_Support_Product__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
     <hasActivationRequired>false</hasActivationRequired>
     <label>Sales Executive</label>
     <license>Salesforce</license>
