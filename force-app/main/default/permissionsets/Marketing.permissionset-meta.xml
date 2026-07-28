@@ -120,6 +120,21 @@
         <field>Lead.Recycle_Reason__c</field>
         <readable>true</readable>
     </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Opportunity.End_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Opportunity.Start_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Opportunity.Subscription_Term__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
     <hasActivationRequired>false</hasActivationRequired>
     <label>Marketing</label>
     <license>Salesforce</license>
@@ -169,7 +184,6 @@
         <recordType>Lead.Marketing</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
-    
     <tabSettings>
         <tab>standard-Lead</tab>
         <visibility>Visible</visibility>

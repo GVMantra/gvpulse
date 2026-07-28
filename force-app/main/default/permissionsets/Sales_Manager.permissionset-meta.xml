@@ -8,7 +8,7 @@
         <editable>true</editable>
         <field>Account.Credit_Hold__c</field>
         <readable>true</readable>
-    </fieldPermissions>    
+    </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
         <field>Lead.Budget_Amount__c</field>
@@ -84,7 +84,7 @@
         <field>Lead.Recycle_Reason__c</field>
         <readable>true</readable>
     </fieldPermissions>
-     <fieldPermissions>
+    <fieldPermissions>
         <editable>true</editable>
         <field>Opportunity.Budget_Amount__c</field>
         <readable>true</readable>
@@ -117,11 +117,22 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>Opportunity.NetSuite_id__c</field>
+        <field>Opportunity.End_Date__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
         <field>Opportunity.Primary_Contact__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Opportunity.Start_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Opportunity.Subscription_Term__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <hasActivationRequired>false</hasActivationRequired>
