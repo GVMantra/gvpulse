@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StandardValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sorted>false</sorted>
+    <standardValue>
+        <fullName>Subscription</fullName>
+        <default>false</default>
+        <label>Subscription</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Service</fullName>
+        <default>false</default>
+        <label>Service</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Support</fullName>
+        <default>false</default>
+        <label>Support</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Perpetual</fullName>
+        <default>false</default>
+        <label>Perpetual</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Hardware</fullName>
+        <default>false</default>
+        <label>Hardware</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Bundle</fullName>
+        <default>false</default>
+        <label>Bundle</label>
+    </standardValue>
+</StandardValueSet>

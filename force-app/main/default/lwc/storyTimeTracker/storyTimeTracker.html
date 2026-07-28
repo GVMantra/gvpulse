@@ -84,9 +84,40 @@
 
                                 <template for:each={row.cells} for:item="cell">
 
-                                    <td key={cell.key} class={cell.className}>
+                                    <td key={cell.key} class={cell.className} data-key={cell.key}
+                                        onmouseenter={handleCellMouseEnter} onmouseleave={handleCellMouseLeave}>
 
-                                        {cell.value}
+                                        <div class="cell-inner">
+
+                                            {cell.value}
+
+                                            <template if:true={cell.showTooltip}>
+
+                                                <div class="worklog-tooltip" style={cell.tooltipStyle}>
+
+                                                    <template for:each={cell.entries} for:item="entry">
+
+                                                        <div key={entry.key} class="worklog-entry">
+
+                                                            <div class="entry-time">
+                                                                {entry.displayTime}
+                                                            </div>
+
+                                                            <template if:true={entry.hasComment}>
+                                                                <div class="entry-comment">
+                                                                    {entry.comment}
+                                                                </div>
+                                                            </template>
+
+                                                        </div>
+
+                                                    </template>
+
+                                                </div>
+
+                                            </template>
+
+                                        </div>
 
                                     </td>
 
