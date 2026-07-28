@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>67.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <assignments>
+        <name>Calculate_and_Assign_End_Date</name>
+        <label>Calculate and Assign End Date</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.End_Date__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>CalculateEndDateFromTerm</elementReference>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <assignments>
+        <name>Calculate_and_Assign_Term</name>
+        <label>Calculate and Assign Term</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.Subscription_Term__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>CalculateTermFromEndDate</elementReference>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <customErrors>
+        <description>End date cannot be less than start date</description>
+        <name>End_Date_error</name>
+        <label>End Date error</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <customErrorMessages>
+            <errorMessage>End date cannot be less than Start Date</errorMessage>
+            <isFieldError>false</isFieldError>
+        </customErrorMessages>
+    </customErrors>
+    <decisions>
+        <name>Check_for_field_changes</name>
+        <label>Check for field changes</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>Calculate_and_Assign_End_Date</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Term Changed</defaultConnectorLabel>
+        <rules>
+            <name>End_date_less_than_start_date</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Start_Date__c</leftValueReference>
+                <operator>GreaterThan</operator>
+                <rightValue>
+                    <elementReference>$Record.End_Date__c</elementReference>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.End_Date__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>End_Date_error</targetReference>
+            </connector>
+            <label>End date less than start date</label>
+        </rules>
+        <rules>
+            <name>End_Date_Changed</name>
+            <conditionLogic>((1 AND 5) OR (2 AND 3)) AND 4</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.End_Date__c</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.End_Date__c</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Subscription_Term__c</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.End_Date__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Subscription_Term__c</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Calculate_and_Assign_Term</targetReference>
+            </connector>
+            <label>End Date Changed</label>
+        </rules>
+    </decisions>
+    <description>This flow calculates end date or term on opportunity record based on some conditions</description>
+    <environments>Default</environments>
+    <formulas>
+        <name>CalculateEndDateFromTerm</name>
+        <dataType>Date</dataType>
+        <expression>ADDMONTHS({!$Record.Start_Date__c}, {!$Record.Subscription_Term__c})</expression>
+    </formulas>
+    <formulas>
+        <name>CalculateTermFromEndDate</name>
+        <dataType>Number</dataType>
+        <expression>((YEAR({!$Record.End_Date__c}) - YEAR({!$Record.Start_Date__c})) * 12) + (MONTH({!$Record.End_Date__c}) - MONTH({!$Record.Start_Date__c}))</expression>
+        <scale>0</scale>
+    </formulas>
+    <interviewLabel>Opportunity-BEFORE-Calculate Term and End Date {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Opportunity-BEFORE-Calculate Term and End Date</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Check_for_field_changes</targetReference>
+        </connector>
+        <filterFormula>AND( 
+NOT({!$Setup.Bypass_validations__c.Bypass_Flows__c}),
+NOT(ISNULL( {!$Record.Start_Date__c} )),
+OR(
+AND( OR( ISNEW(), ISCHANGED( {!$Record.Start_Date__c} ) ) ),
+AND( OR(ISNEW(), ISCHANGED( {!$Record.End_Date__c}) ), NOT(ISNULL( {!$Record.End_Date__c} )) ),
+AND( OR(ISNEW(), ISCHANGED( {!$Record.Subscription_Term__c}) ), NOT(ISNULL( {!$Record.Subscription_Term__c} )) )
+)
+)</filterFormula>
+        <object>Opportunity</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordBeforeSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>
