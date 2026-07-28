@@ -3,9 +3,6 @@
     <custom>false</custom>
     <layoutAssignments>
         <layout>Lead-Marketing Lead</layout>
-    </layoutAssignments>
-    <layoutAssignments>
-        <layout>Lead-Marketing Lead</layout>
         <recordType>Lead.Marketing</recordType>
     </layoutAssignments>
     <layoutAssignments>
@@ -779,7 +776,10 @@
         <enabled>true</enabled>
         <name>UseWebLink</name>
     </userPermissions>
-   
+    <userPermissions>
+        <enabled>true</enabled>
+        <name>UserHasDevOpsCore</name>
+    </userPermissions>
     <userPermissions>
         <enabled>true</enabled>
         <name>ViewAllData</name>
