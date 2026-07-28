@@ -1,7 +1,8 @@
 import { LightningElement, track } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
 import getTimeTrackerData from '@salesforce/apex/TimeTrackerController.getTimeTrackerData';
 
-export default class TimeTracker extends LightningElement {
+export default class TimeTracker extends NavigationMixin(LightningElement) {
 
     @track headers = [];
     @track rows = [];
@@ -149,7 +150,9 @@ export default class TimeTracker extends LightningElement {
 
                     key: header.key,
 
-                    value: this.formatHours(value),
+                    value: Number(value) === 0
+                        ? ''
+                        : this.formatHours(value),
 
                     className:
                         header.className === 'weekend-header'
@@ -244,6 +247,24 @@ export default class TimeTracker extends LightningElement {
             String(date.getDate()).padStart(2, '0');
 
         return `${year}-${month}-${day}`;
+
+    }
+    handleResourceClick(event) {
+
+        const resourceName = event.currentTarget.dataset.resource;
+
+        this[NavigationMixin.Navigate]({
+            type: 'standard__navItemPage',
+            attributes: {
+                apiName: 'Story_Time_Tracker'
+            },
+            state: {
+                c__resourceName: resourceName,
+                c__projectKey: this.projectKey,
+                c__startDate: this.startDate,
+                c__endDate: this.endDate
+            }
+        });
 
     }
 
