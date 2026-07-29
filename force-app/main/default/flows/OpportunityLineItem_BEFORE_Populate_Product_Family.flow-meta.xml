@@ -2,9 +2,23 @@
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>67.0</apiVersion>
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <assignments>
+        <name>Populate_product_family</name>
+        <label>Populate product family</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.Product_Family__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Record.Product2.Family</elementReference>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <description>Populates Product Family field on opportunity product from product on creation</description>
     <environments>Default</environments>
-    <interviewLabel>OpportunityLineItem-AFTER-Create-Count And Update Products By Family {!$Flow.CurrentDateTime}</interviewLabel>
-    <label>OpportunityLineItem-AFTER-Create-Count And Update Products By Family</label>
+    <interviewLabel>OpportunityLineItem-BEFORE-Populate Product Family {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>OpportunityLineItem-BEFORE-Populate Product Family</label>
     <processMetadataValues>
         <name>BuilderType</name>
         <value>
@@ -28,26 +42,12 @@
         <locationX>0</locationX>
         <locationY>0</locationY>
         <connector>
-            <targetReference>Count_Products</targetReference>
+            <targetReference>Populate_product_family</targetReference>
         </connector>
         <filterFormula>NOT({!$Setup.Bypass_validations__c.Bypass_Flows__c})</filterFormula>
         <object>OpportunityLineItem</object>
         <recordTriggerType>Create</recordTriggerType>
-        <triggerType>RecordAfterSave</triggerType>
+        <triggerType>RecordBeforeSave</triggerType>
     </start>
     <status>Active</status>
-    <subflows>
-        <description>Count Products and populate them on opportunity by family</description>
-        <name>Count_Products</name>
-        <label>Count Products</label>
-        <locationX>0</locationX>
-        <locationY>0</locationY>
-        <flowName>OpportunityLineItem_SUBFLOW_Count_Total_Products_By_Family</flowName>
-        <inputAssignments>
-            <name>OpportunityId</name>
-            <value>
-                <elementReference>$Record.OpportunityId</elementReference>
-            </value>
-        </inputAssignments>
-    </subflows>
 </Flow>
