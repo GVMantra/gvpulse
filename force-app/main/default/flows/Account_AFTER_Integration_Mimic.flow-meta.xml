@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>67.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <environments>Default</environments>
+    <formulas>
+        <name>UniqueNumberID</name>
+        <dataType>String</dataType>
+        <expression>LEFT(
+    LPAD(TEXT(SECOND(TIMEVALUE(NOW()))), 2, &quot;0&quot;) &amp; 
+    LPAD(TEXT(MINUTE(TIMEVALUE(NOW()))), 2, &quot;0&quot;) &amp;
+    LPAD(TEXT(DAY(TODAY())), 2, &quot;0&quot;) &amp; 
+    LPAD(TEXT(MONTH(TODAY())), 2, &quot;0&quot;) &amp; 
+    RIGHT(TEXT(YEAR(TODAY())),2),
+    10
+)</expression>
+    </formulas>
+    <interviewLabel>Account-AFTER- {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Account-AFTER-Integration Mimic</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>Update_Account_Record_After_Delay</name>
+        <label>Update Account Record After Delay</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>Integration_Status__c</field>
+            <value>
+                <stringValue>Synced</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>NetSuite_id__c</field>
+            <value>
+                <elementReference>UniqueNumberID</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Update_Integration_Status</name>
+        <label>Update Integration Status</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>Integration_Status__c</field>
+            <value>
+                <stringValue>In Progress</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Update_Integration_Status</targetReference>
+        </connector>
+        <filterFormula>AND(
+NOT({!$Setup.Bypass_validations__c.Bypass_Flows__c}),
+OR(
+AND(ISCHANGED({!$Record.Integration_Status__c}),ISPICKVAL({!$Record.Integration_Status__c},&apos;Not Started&apos;)),
+AND(ISCHANGED({!$Record.Integration_Status__c}),ISPICKVAL({!$Record.Integration_Status__c},&apos;Re-Sync&apos;)),
+ISCHANGED({!$Record.Name}),
+ISCHANGED({!$Record.Phone}),
+ISCHANGED({!$Record.ParentId}),
+ISCHANGED({!$Record.AnnualRevenue}),
+ISCHANGED({!$Record.Website}),
+ISCHANGED({!$Record.BillingAddress}),
+ISCHANGED({!$Record.ShippingAddress})
+))</filterFormula>
+        <object>Account</object>
+        <recordTriggerType>Update</recordTriggerType>
+        <scheduledPaths>
+            <name>Minimum_delay_in_seconds</name>
+            <connector>
+                <targetReference>Update_Account_Record_After_Delay</targetReference>
+            </connector>
+            <label>Minimum delay in seconds</label>
+            <offsetNumber>1</offsetNumber>
+            <offsetUnit>Minutes</offsetUnit>
+            <recordField>LastModifiedDate</recordField>
+            <timeSource>RecordField</timeSource>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>
